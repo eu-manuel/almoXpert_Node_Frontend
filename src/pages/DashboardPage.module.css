@@ -1,14 +1,60 @@
-.MainContainer{
-    display: flex;
-    flex-direction: row;
+/* DashboardPage.module.css */
 
-
+/* Container principal do dashboard */
+.DASHMainContainer {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
 }
 
-.BodyContainer {
-  background-color: rgba(255, 255, 255, 0.212);
-  flex: 1; /* para ocupar o espaço restante */
+/* Corpo do dashboard (lado direito) */
+.DASHBodyContainer {
+  flex: 1;
   padding: 20px;
   transition: margin-left 0.3s ease;
-  margin-left: 0; /* valor inicial, sem menu */
+}
+
+/* Container para os gráficos */
+.DASHChartContainer {
+  display: flex;
+  flex-wrap: wrap; /* permite quebrar em múltiplas linhas */
+  gap: 20px; /* espaçamento entre gráficos */
+  margin-top: 20px;
+}
+
+/* Cada gráfico individual */
+.DASHChartContainer > div {
+  flex: 1 1 300px; /* ocupa espaço disponível, mas mínimo 300px */
+  height: 200px; /* altura padrão */
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* efeito hover nos gráficos */
+.DASHChartContainer > div:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Título da página */
+.DASHBodyContainer h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+/* responsivo para telas menores */
+@media (max-width: 900px) {
+  .DASHChartContainer > div {
+    flex: 1 1 100%; /* gráficos ocupam 100% da largura */
+    height: 220px;
+  }
 }

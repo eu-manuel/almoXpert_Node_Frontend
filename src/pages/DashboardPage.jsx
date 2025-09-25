@@ -2,6 +2,9 @@ import { useState, useContext } from "react";
 import SideNav from "../components/SideNav";
 import ItemTable from "../components/ItemTable";
 import styles from "./DashboardPage.module.css";
+import BarChartComponent from "../components/BarChartComponent";
+import LineChartComponent from "../components/LineChartComponent";
+import PieChartComponent from "../components/PieChartComponent";
 import { UserContext } from "../context/UserContext";
 
 export default function DashboardPage() {
@@ -11,16 +14,17 @@ export default function DashboardPage() {
   if (!user) return <p>Carregando...</p>; // opcional: enquanto carrega o user
 
   return (
-    <div className={styles.MainContainer}>
+    <div className={styles.DASHMainContainer}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      <div
-        className={styles.BodyContainer}
-        style={{ marginLeft: menuOpen ? "250px" : "0" }}
-      >
-        <h1>Dashboard</h1>
-        <p>Bem-vindo, {user.email}!</p>
-        <p>Cargo: {user.cargo}</p>
-        <ItemTable />
+      <div className={styles.DASHBodyContainer} style={{ marginLeft: menuOpen ? "250px" : "0" }}>
+        <div>
+          <h1>Dashboard</h1>
+            <div className={styles.DASHChartContainer}>
+              <div><BarChartComponent /></div>
+              <div><PieChartComponent /></div>
+              <div><LineChartComponent /></div>
+            </div>
+        </div>
       </div>
     </div>
   );
