@@ -1,0 +1,14 @@
+.MainContainer{
+    display: flex;
+    flex-direction: row;
+
+
+}
+
+.BodyContainer {
+  background-color: rgba(255, 255, 255, 0.212);
+  flex: 1; /* para ocupar o espaço restante */
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  margin-left: 0; /* valor inicial, sem menu */
+}
