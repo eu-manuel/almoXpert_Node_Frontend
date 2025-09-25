@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ItemTable.module.css";
 
-const ItemsTable = () => {
+const ItemTable = () => {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const token = localStorage.getItem("token"); // se usa auth
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.warn("Usuário não autenticado");
+          setLoading(false);
+          return;
+        }
+
         const res = await fetch("http://localhost:3000/api/items", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        if (!res.ok) {
+          throw new Error(`Erro na requisição: ${res.status}`);
+        }
+
         const data = await res.json();
         setItems(data);
       } catch (err) {
         console.error("Erro ao buscar itens:", err);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchItems();
   }, []);
+
+  if (loading) return <p>Carregando itens...</p>;
 
   return (
     <div className={styles.tableContainer}>
@@ -62,4 +79,4 @@ const ItemsTable = () => {
   );
 };
 
-export default ItemsTable;
+export default ItemTable;

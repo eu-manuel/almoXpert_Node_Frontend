@@ -16,11 +16,9 @@ export default function LoginForm({ onLogin }) {
       
       // data não traz o usuário completo? se não, podemos buscar depois
       const token = data.token;
-
       // decodificar token para pegar dados do usuário (opcional)
       const payload = JSON.parse(atob(token.split(".")[1]));
-
-      onLogin({ email: payload.email, cargo: payload.cargo, id: payload.id });
+      onLogin({ email: payload.email, cargo: payload.cargo, id: payload.id , token: token});
     } catch (err) {
       setError(err.message);
     }

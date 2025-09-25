@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
-import DashboardPage from "./DashboardPage";
 import styles from "./LoginPage.module.css";
-
-
-
-
+import { UserContext } from "../context/UserContext";
 
 export default function LoginPage() {
-  const [user, setUser] = useState(null);
+  const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  if (user) return <DashboardPage user={user} />;
+  const handleLogin = (userData) => {
+    // salva no contexto
+    setUser(userData);
+ 
+
+    // opcional: salvar no localStorage para manter o login ao recarregar
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", userData.token);
+
+    // redireciona para dashboard
+    navigate("/dashboard");
+  };
 
   return (
     <div className={styles.container}>
-      
-      <img className={styles.imagem} src="/Logo Pequena AlmoXpert.png" alt="logo Almoxpert" />
-      <LoginForm onLogin={setUser} />
-
-
-      
+      <img
+        className={styles.imagem}
+        src="/Logo Pequena AlmoXpert.png"
+        alt="logo Almoxpert"
+      />
+      <LoginForm onLogin={handleLogin} />
     </div>
   );
 }

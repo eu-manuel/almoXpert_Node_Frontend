@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import SideNav from "../components/SideNav";
-import styles from "./DashboardPage.module.css";
 import ItemTable from "../components/ItemTable";
+import styles from "./DashboardPage.module.css";
+import { UserContext } from "../context/UserContext";
 
-export default function DashboardPage({ user }) {
+export default function DashboardPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useContext(UserContext); // pega o usuário do contexto
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
+  if (!user) return <p>Carregando...</p>; // opcional: enquanto carrega o user
 
   return (
     <div className={styles.MainContainer}>
@@ -22,7 +21,6 @@ export default function DashboardPage({ user }) {
         <p>Bem-vindo, {user.email}!</p>
         <p>Cargo: {user.cargo}</p>
         <ItemTable />
-        <button onClick={handleLogout}>Sair</button>
       </div>
     </div>
   );
