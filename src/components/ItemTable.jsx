@@ -50,7 +50,7 @@ const ItemTable = () => {
             <th>Código Interno</th>
             <th>Unidade</th>
             <th>Estoque Mínimo</th>
-            <th>Estoque Máximo</th>
+            <th>Quantidade em estoque</th>
             <th>Status</th>
           </tr>
         </thead>

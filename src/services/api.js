@@ -20,3 +20,20 @@ export async function login(email, senha) {
 
   return data;
 }
+
+
+export async function register(nome, email, senha, cargo) {
+  const res = await fetch(`${API_URL}/users/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome, email, senha, cargo }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Erro ao cadastrar");
+  }
+
+  return data;
+}
