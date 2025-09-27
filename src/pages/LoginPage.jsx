@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginForm from "../components/LoginForm";
+import AuthPage from "../components/AuthPage"; // vai alternar entre login e cadastro
 import styles from "./LoginPage.module.css";
 import { UserContext } from "../context/UserContext";
 
@@ -11,9 +11,8 @@ export default function LoginPage() {
   const handleLogin = (userData) => {
     // salva no contexto
     setUser(userData);
- 
 
-    // opcional: salvar no localStorage para manter o login ao recarregar
+    // opcional: salvar no localStorage para manter login após recarregar
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("token", userData.token);
 
@@ -28,7 +27,9 @@ export default function LoginPage() {
         src="/Logo Pequena AlmoXpert.png"
         alt="logo Almoxpert"
       />
-      <LoginForm onLogin={handleLogin} />
+
+      {/* AuthPage agora cuida de alternar entre LoginForm e RegisterForm */}
+      <AuthPage onLogin={handleLogin} />
     </div>
   );
 }
