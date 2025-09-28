@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import SideNav from "../components/SideNav";
 import ItemTable from "../components/ItemTable";
-import styles from "./DashboardPage.module.css";
+import styles from "./EstoquePage.module.css";
 import { UserContext } from "../context/UserContext";
 
 export default function DashboardPage() {
@@ -11,10 +11,10 @@ export default function DashboardPage() {
   if (!user) return <p>Carregando...</p>; // opcional: enquanto carrega o user
 
   return (
-    <div className={styles.MainContainer}>
+    <div className={styles.pageContainer}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
       <div
-        className={styles.BodyContainer}
+        className={styles.mainContent}
         style={{ marginLeft: menuOpen ? "250px" : "0" }}
       >
         <h1>Estoque</h1>
