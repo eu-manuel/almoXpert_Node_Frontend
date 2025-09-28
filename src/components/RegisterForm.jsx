@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { register } from "../services/api";
+import { register } from "../services/userServices";
 import styles from "./LoginForm.module.css";
 
 export default function RegisterForm({ onSwitchToLogin }) {

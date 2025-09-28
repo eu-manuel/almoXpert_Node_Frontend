@@ -1,7 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
+
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import EstoquePage from "./pages/EstoquePage";
+import SupplierPage from "./pages/SupplierPage";
+
+
 import { useContext } from "react";
 import { UserContext } from "./context/UserContext";
 
@@ -23,6 +28,11 @@ function App() {
         <Route
           path="/items"
           element={user ? <EstoquePage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/suppliers"
+          element={user ? <SupplierPage /> : <Navigate to="/login" />}
         />
 
         {/* Redireciona qualquer rota inválida para o login */}

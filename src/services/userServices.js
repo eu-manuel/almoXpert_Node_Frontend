@@ -1,6 +1,4 @@
-// src/services/api.js
-
-const API_URL = "http://localhost:3000/api"; // ou a URL do seu backend
+const API_URL = "http://localhost:3000/api"; // URL do backend
 
 export async function login(email, senha) {
   const res = await fetch(`${API_URL}/auth/login`, {
@@ -37,3 +35,5 @@ export async function register(nome, email, senha, cargo) {
 
   return data;
 }
+
+

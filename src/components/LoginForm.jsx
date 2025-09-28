@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login } from "../services/api";
+import { login } from "../services/userServices";
 import styles from "./LoginForm.module.css";
 
 export default function LoginForm({ onLogin, onSwitchToRegister }) {
