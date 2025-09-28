@@ -3,12 +3,13 @@ import { Pencil, Trash2 } from "lucide-react";
 import styles from "./SupplierTable.module.css";
 import { getSuppliers, updateSupplier, deleteSupplier } from "../services/supplierServices";
 
-const SupplierTable = () => {
+const SupplierTable = ({ refreshFlag }) => { // ⚡ recebe prop de refresh
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchSuppliers = async () => {
     try {
+      setLoading(true);
       const data = await getSuppliers();
       setSuppliers(data);
     } catch (err) {
@@ -39,9 +40,10 @@ const SupplierTable = () => {
     }
   };
 
+  // ⚡ dispara fetch quando componente monta ou refreshFlag muda evita recaregar a pagina inteira 
   useEffect(() => {
     fetchSuppliers();
-  }, []);
+  }, [refreshFlag]);
 
   if (loading) return <p>Carregando fornecedores...</p>;
 
@@ -50,7 +52,6 @@ const SupplierTable = () => {
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Nome</th>
             <th>CNPJ</th>
             <th>Telefone</th>
@@ -63,7 +64,6 @@ const SupplierTable = () => {
           {suppliers.length > 0 ? (
             suppliers.map((s) => (
               <tr key={s.id}>
-                <td>{s.id}</td>
                 <td>{s.nome}</td>
                 <td>{s.CNPJ}</td>
                 <td>{s.telefone}</td>
@@ -71,7 +71,7 @@ const SupplierTable = () => {
                 <td>{s.endereco}</td>
                 <td>
                   <div className={styles.container}>
-                    <button className={styles.editBtn} onClick={()=>handleEdit(s)}>
+                    <button className={styles.editBtn} onClick={() => handleEdit(s)}>
                       <Pencil size={18} />
                     </button>
                     <button className={styles.deleteBtn} onClick={() => handleDelete(s.id)}>
