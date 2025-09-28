@@ -1,3 +1,42 @@
+.container {
+  display: flex;
+  gap: 6px;
+}
+
+/* Botões base */
+.editBtn,
+.deleteBtn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Botão editar */
+.editBtn {
+  background-color: #f3f4f6; /* cinza bem claro */
+  color: #2563eb; /* azul padrão */
+}
+.editBtn:hover {
+  background-color: #dbeafe; /* azul suave */
+  color: #1e40af; /* azul mais escuro */
+}
+
+/* Botão excluir */
+.deleteBtn {
+  background-color: #f3f4f6; /* cinza bem claro */
+  color: #dc2626; /* vermelho */
+}
+.deleteBtn:hover {
+  background-color: #fee2e2; /* vermelho claro */
+  color: #b91c1c; /* vermelho mais escuro */
+}
+
+
 .tableContainer {
   width: 100%;
   overflow-x: auto; /* rolagem horizontal em telas pequenas */
@@ -74,7 +113,7 @@
   }
 
   .table td::before {
-    content: attr(data-label); /* pega o nome da coluna */
+    content: attr(data-label); /* Apega o nome da coluna */
     font-weight: bold;
     color: #333;
   }

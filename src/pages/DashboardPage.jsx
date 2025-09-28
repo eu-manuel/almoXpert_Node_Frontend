@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
 import SideNav from "../components/SideNav";
-import ItemTable from "../components/ItemTable";
 import styles from "./DashboardPage.module.css";
 import BarChartComponent from "../components/BarChartComponent";
 import LineChartComponent from "../components/LineChartComponent";
