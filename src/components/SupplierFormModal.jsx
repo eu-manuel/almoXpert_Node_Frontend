@@ -39,7 +39,7 @@ export default function SupplierFormModal({ onCreated }) {
       {open && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2>Novo Fornecedor</h2>
+            <h2 className={styles.formTitulo}>Novo Fornecedor</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <input
                 type="text"
