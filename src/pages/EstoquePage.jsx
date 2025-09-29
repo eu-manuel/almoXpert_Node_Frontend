@@ -18,8 +18,6 @@ export default function DashboardPage() {
         style={{ marginLeft: menuOpen ? "250px" : "0" }}
       >
         <h1>Estoque</h1>
-        <p>Bem-vindo, {user.email}!</p>
-        <p>Cargo: {user.cargo}</p>
         <ItemTable />
       </div>
     </div>
