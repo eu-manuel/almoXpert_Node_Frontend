@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import EstoquePage from "./pages/EstoquePage";
 import SupplierPage from "./pages/SupplierPage";
+import MovementPage from "./pages/MovementPage";
 
 
 import { useContext } from "react";
@@ -33,6 +34,11 @@ function App() {
         <Route
           path="/suppliers"
           element={user ? <SupplierPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/movements"
+          element={user ? <MovementPage /> : <Navigate to="/login" />}
         />
 
         {/* Redireciona qualquer rota inválida para o login */}

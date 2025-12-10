@@ -21,7 +21,7 @@ export async function login(email, senha) {
 
 
 export async function register(nome, email, senha, cargo) {
-  const res = await fetch(`${API_URL}/users/register`, {
+  const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nome, email, senha, cargo }),
