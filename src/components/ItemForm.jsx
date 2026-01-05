@@ -19,9 +19,17 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
     if (itemToEdit) setForm(itemToEdit);
   }, [itemToEdit]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+ const handleChange = (e) => {
+  const { name, value, type } = e.target;
+
+  setForm((prev) => ({
+    ...prev,
+    [name]: type === "number" && value !== ""
+      ? Number(value)
+      : value,
+  }));
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
