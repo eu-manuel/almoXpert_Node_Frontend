@@ -4,10 +4,21 @@ import WarehouseSelector from "../components/WarehouseSelector";
 import StockTable from "../components/StockTable";
 import Modal from "../components/GenericModal";
 import AddStockForm from "../components/AddStockForm";
-import styles from "./EstoquePage.module.css";
 import { UserContext } from "../context/UserContext";
 import { getMyWarehouses } from "../services/warehouseServices";
 import { getItemsByWarehouse } from "../services/itemWarehouseServices";
+import {
+  Box,
+  Container,
+  Typography,
+  Fab,
+  CircularProgress,
+} from "@mui/material";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import AddIcon from "@mui/icons-material/Add";
+
+const DRAWER_WIDTH = 240;
+const COLLAPSED_WIDTH = 72;
 
 export default function EstoquePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,56 +84,82 @@ export default function EstoquePage() {
     (w) => String(w.id_almoxarifado) === String(selectedWarehouseId)
   );
 
-  if (!user) return <p>Carregando...</p>;
+  if (!user) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <div className={styles.pageContainer}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      <div
-        className={styles.mainContent}
-        style={{ marginLeft: menuOpen ? "250px" : "0" }}
+      
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          ml: { xs: 0, md: `${COLLAPSED_WIDTH}px` },
+          transition: 'margin 0.3s',
+          ...(menuOpen && { ml: { md: `${DRAWER_WIDTH}px` } }),
+        }}
       >
-        <h1>Estoque</h1>
+        <Container maxWidth="xl" sx={{ mt: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+            <InventoryIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+            <Typography variant="h4" component="h1" fontWeight={600}>
+              Estoque
+            </Typography>
+          </Box>
 
-        <WarehouseSelector
-          warehouses={warehouses}
-          selectedId={selectedWarehouseId}
-          onSelect={setSelectedWarehouseId}
-          loading={loadingWarehouses}
-        />
+          <Box sx={{ mb: 3 }}>
+            <WarehouseSelector
+              warehouses={warehouses}
+              selectedId={selectedWarehouseId}
+              onSelect={setSelectedWarehouseId}
+              loading={loadingWarehouses}
+            />
+          </Box>
 
-        <StockTable
-          items={stockItems}
-          loading={loadingItems}
-          warehouseName={selectedWarehouse?.nome}
-        />
-
-        {/* Botão FAB para adicionar item ao estoque */}
-        {selectedWarehouseId && (
-          <button 
-            className={styles.fab} 
-            onClick={() => setModalOpen(true)}
-            title="Adicionar item ao estoque"
-          >
-            +
-          </button>
-        )}
-
-        {/* Modal de adicionar item */}
-        <Modal
-          title="Adicionar Item ao Estoque"
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-        >
-          <AddStockForm
-            warehouseId={selectedWarehouseId}
+          <StockTable
+            items={stockItems}
+            loading={loadingItems}
             warehouseName={selectedWarehouse?.nome}
-            onClose={() => setModalOpen(false)}
-            onSaved={fetchStockItems}
           />
-        </Modal>
-      </div>
-    </div>
+
+          {/* FAB para adicionar item ao estoque */}
+          {selectedWarehouseId && (
+            <Fab
+              color="primary"
+              onClick={() => setModalOpen(true)}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          )}
+
+          {/* Modal de adicionar item */}
+          <Modal
+            title="Adicionar Item ao Estoque"
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+          >
+            <AddStockForm
+              warehouseId={selectedWarehouseId}
+              warehouseName={selectedWarehouse?.nome}
+              onClose={() => setModalOpen(false)}
+              onSaved={fetchStockItems}
+            />
+          </Modal>
+        </Container>
+      </Box>
+    </Box>
   );
 }
 
