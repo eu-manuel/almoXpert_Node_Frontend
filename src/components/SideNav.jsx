@@ -53,35 +53,57 @@ export default function SideNav() {
         pt: 1,
       }}
     >
-      {/* Logo */}
+      {/* Toggle Button + Logo */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: open ? 'flex-start' : 'center',
-          px: 2,
+          justifyContent: open ? 'space-between' : 'center',
+          px: open ? 2 : 1,
           py: 2,
           minHeight: 64,
         }}
       >
         {open ? (
-          <Box
-            component="span"
+          <>
+            <Box
+              component="span"
+              sx={{
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                color: 'primary.main',
+              }}
+            >
+              AlmoXpert
+            </Box>
+            <IconButton
+              onClick={() => setOpen(!open)}
+              size="small"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </>
+        ) : (
+          <IconButton
+            onClick={() => setOpen(!open)}
             sx={{
-              fontSize: '1.5rem',
-              fontWeight: 700,
-              color: 'primary.main',
+              color: 'text.secondary',
             }}
           >
-            AlmoXpert
-          </Box>
-        ) : (
-          <Box
-            component="img"
-            src={almoXlogo}
-            alt="Logo AlmoXpert"
-            sx={{ width: 40, height: 40 }}
-          />
+            <Box
+              component="img"
+              src={almoXlogo}
+              alt="Logo AlmoXpert"
+              sx={{
+                width: 40,
+                height: 40,
+                pointerEvents: 'none',
+              }}
+            />
+          </IconButton>
         )}
       </Box>
 
@@ -147,23 +169,6 @@ export default function SideNav() {
 
   return (
     <>
-      {/* Toggle Button for Mobile */}
-      <IconButton
-        onClick={() => setOpen(!open)}
-        sx={{
-          position: 'fixed',
-          top: 12,
-          left: 12,
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: 'background.paper',
-          '&:hover': {
-            backgroundColor: 'action.hover',
-          },
-        }}
-      >
-        <MenuIcon />
-      </IconButton>
-
       {/* Drawer */}
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
