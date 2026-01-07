@@ -169,6 +169,26 @@ export default function SideNav() {
 
   return (
     <>
+      {/* Toggle Button for Mobile - outside the drawer */}
+      {isMobile && !open && (
+        <IconButton
+          onClick={() => setOpen(true)}
+          sx={{
+            position: 'fixed',
+            top: 12,
+            left: 12,
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            backgroundColor: 'background.paper',
+            boxShadow: 2,
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+      )}
+
       {/* Drawer */}
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
@@ -178,7 +198,7 @@ export default function SideNav() {
           width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
+            width: isMobile ? DRAWER_WIDTH : (open ? DRAWER_WIDTH : COLLAPSED_WIDTH),
             boxSizing: 'border-box',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
