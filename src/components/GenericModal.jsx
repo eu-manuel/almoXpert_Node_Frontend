@@ -1,18 +1,56 @@
 import React from "react";
-import styles from "./GenericModal.module.css";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Box,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
-export default function Modal({ title, isOpen, onClose, children }) {
-  if (!isOpen) return null;
-
+export default function Modal({ title, isOpen, onClose, children, maxWidth = "sm" }) {
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <div className={styles.header}>
-          <h2>{title}</h2>
-          <button onClick={onClose} className={styles.closeBtn}>X</button>
-        </div>
-        <div className={styles.content}>{children}</div>
-      </div>
-    </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth={maxWidth}
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          minWidth: { xs: '90%', sm: 400 },
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: 1,
+          borderColor: 'divider',
+          pb: 2,
+        }}
+      >
+        <Box component="span" sx={{ fontWeight: 600 }}>
+          {title}
+        </Box>
+        <IconButton
+          onClick={onClose}
+          size="small"
+          sx={{
+            color: 'text.secondary',
+            '&:hover': {
+              color: 'error.main',
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent sx={{ pt: 3 }}>
+        {children}
+      </DialogContent>
+    </Dialog>
   );
 }
