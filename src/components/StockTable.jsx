@@ -57,7 +57,7 @@ export default function StockTable({ items, loading, warehouseName }) {
         </Box>
       )}
       
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
         <Table>
           <TableHead>
             <TableRow>
