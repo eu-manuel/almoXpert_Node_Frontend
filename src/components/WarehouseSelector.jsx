@@ -50,6 +50,12 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
               '& .MuiInputBase-root': {
                 backgroundColor: 'white',
                 color: '#333',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+                '&.Mui-focused': {
+                  backgroundColor: 'white',
+                },
               },
               '& .MuiInputBase-input': {
                 color: '#333',
@@ -57,7 +63,6 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
               '& .MuiInputLabel-root': {
                 color: '#00000048',
                 fontWeight: 600,
-                
               },
               '& .MuiInputLabel-root.Mui-focused': {
                 color: '#16a34a',
@@ -65,7 +70,6 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
                 backgroundColor: '#fff',
                 padding: '0 4px',
                 borderRadius: '4px',
-             
               },
               '& .MuiInputLabel-root.MuiFormLabel-filled': {
                 color: '#16a34a',
@@ -73,17 +77,17 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
                 backgroundColor: '#fff',
                 padding: '0 4px',
                 borderRadius: '4px',
-             
               },
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
                   borderColor: '#ccc',
                 },
                 '&:hover fieldset': {
-                  borderColor: '#888',
+                  borderColor: '#16a34a',
                 },
                 '&.Mui-focused fieldset': {
                   borderColor: '#16a34a',
+                  borderWidth: '2px',
                 },
               },
               '& .MuiAutocomplete-endAdornment': {
