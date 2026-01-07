@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from "react";
-import styles from "./MovementTable.module.css";
 import { getMovements } from "../services/movementServices";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import TuneIcon from "@mui/icons-material/Tune";
 
 const MovementTable = ({ refreshFlag }) => {
   const [movements, setMovements] = useState([]);
@@ -45,58 +61,98 @@ const MovementTable = ({ refreshFlag }) => {
     });
   };
 
-  // Retorna classe CSS baseada no tipo
-  const getTipoClass = (tipo) => {
-    const classes = {
-      entrada: styles.tipoEntrada,
-      saida: styles.tipoSaida,
-      transferencia: styles.tipoTransferencia,
-      ajuste: styles.tipoAjuste
+  // Retorna cor e ícone baseado no tipo
+  const getTipoConfig = (tipo) => {
+    const config = {
+      entrada: { color: "success", icon: <ArrowDownwardIcon fontSize="small" /> },
+      saida: { color: "error", icon: <ArrowUpwardIcon fontSize="small" /> },
+      transferencia: { color: "info", icon: <SwapHorizIcon fontSize="small" /> },
+      ajuste: { color: "warning", icon: <TuneIcon fontSize="small" /> }
     };
-    return classes[tipo] || "";
+    return config[tipo] || { color: "default", icon: null };
   };
 
-  if (loading) return <p>Carregando movimentações...</p>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Carregando movimentações...</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Tipo</th>
-            <th>Item</th>
-            <th>Quantidade</th>
-            <th>Almoxarifado</th>
-            <th>Usuário</th>
-            <th>Observação</th>
-          </tr>
-        </thead>
-        <tbody>
+    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Data</TableCell>
+            <TableCell>Tipo</TableCell>
+            <TableCell>Item</TableCell>
+            <TableCell align="center">Quantidade</TableCell>
+            <TableCell>Almoxarifado</TableCell>
+            <TableCell>Usuário</TableCell>
+            <TableCell>Observação</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {movements.length > 0 ? (
-            movements.map((m) => (
-              <tr key={m.id_movimentacao}>
-                <td>{formatData(m.data_movimentacao)}</td>
-                <td>
-                  <span className={`${styles.tipoBadge} ${getTipoClass(m.tipo)}`}>
-                    {formatTipo(m.tipo)}
-                  </span>
-                </td>
-                <td>{m.Item?.nome || `ID: ${m.id_item}`}</td>
-                <td>{m.quantidade}</td>
-                <td>{m.Warehouse?.nome || `ID: ${m.id_almoxarifado}`}</td>
-                <td>{m.User?.nome || `ID: ${m.id_usuario}`}</td>
-                <td>{m.observacao || "-"}</td>
-              </tr>
-            ))
+            movements.map((m) => {
+              const tipoConfig = getTipoConfig(m.tipo);
+              return (
+                <TableRow key={m.id_movimentacao}>
+                  <TableCell>{formatData(m.data_movimentacao)}</TableCell>
+                  <TableCell>
+                    <Chip
+                      icon={tipoConfig.icon}
+                      label={formatTipo(m.tipo)}
+                      color={tipoConfig.color}
+                      size="small"
+                      sx={{ fontWeight: 500 }}
+                    />
+                  </TableCell>
+                  <TableCell>{m.Item?.nome || `ID: ${m.id_item}`}</TableCell>
+                  <TableCell align="center">
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        color: m.tipo === 'entrada' ? 'success.main' : m.tipo === 'saida' ? 'error.main' : 'text.primary'
+                      }}
+                    >
+                      {m.tipo === 'entrada' ? '+' : m.tipo === 'saida' ? '-' : ''}{m.quantidade}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{m.Warehouse?.nome || `ID: ${m.id_almoxarifado}`}</TableCell>
+                  <TableCell>{m.User?.nome || `ID: ${m.id_usuario}`}</TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        maxWidth: 200,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {m.observacao || "-"}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              );
+            })
           ) : (
-            <tr>
-              <td colSpan="7">Nenhuma movimentação encontrada</td>
-            </tr>
+            <TableRow>
+              <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                <Typography color="text.secondary">
+                  Nenhuma movimentação encontrada
+                </Typography>
+              </TableCell>
+            </TableRow>
           )}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

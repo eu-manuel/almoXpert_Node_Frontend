@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
-import styles from "./SupplierTable.module.css";
 import { getSuppliers, updateSupplier, deleteSupplier } from "../services/supplierServices";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import BusinessIcon from "@mui/icons-material/Business";
 
-const SupplierTable = ({ refreshFlag }) => { // ⚡ recebe prop de refresh
+const SupplierTable = ({ refreshFlag }) => {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,55 +55,94 @@ const SupplierTable = ({ refreshFlag }) => { // ⚡ recebe prop de refresh
     }
   };
 
-  // ⚡ dispara fetch quando componente monta ou refreshFlag muda evita recaregar a pagina inteira 
   useEffect(() => {
     fetchSuppliers();
   }, [refreshFlag]);
 
-  if (loading) return <p>Carregando fornecedores...</p>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Carregando fornecedores...</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CNPJ</th>
-            <th>Telefone</th>
-            <th>Email</th>
-            <th>Endereço</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
+    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Nome</TableCell>
+            <TableCell>CNPJ</TableCell>
+            <TableCell>Telefone</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Endereço</TableCell>
+            <TableCell align="center">Ações</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {suppliers.length > 0 ? (
             suppliers.map((s) => (
-              <tr key={s.id}>
-                <td>{s.nome}</td>
-                <td>{s.CNPJ}</td>
-                <td>{s.telefone}</td>
-                <td>{s.email}</td>
-                <td>{s.endereco}</td>
-                <td>
-                  <div className={styles.container}>
-                    <button className={styles.editBtn} onClick={() => handleEdit(s)}>
-                      <Pencil size={18} />
-                    </button>
-                    <button className={styles.deleteBtn} onClick={() => handleDelete(s.id)}>
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+              <TableRow key={s.id}>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <BusinessIcon fontSize="small" color="action" />
+                    {s.nome}
+                  </Box>
+                </TableCell>
+                <TableCell>{s.CNPJ || "-"}</TableCell>
+                <TableCell>{s.telefone || "-"}</TableCell>
+                <TableCell>{s.email || "-"}</TableCell>
+                <TableCell>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      maxWidth: 200,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {s.endereco || "-"}
+                  </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                    <Tooltip title="Editar">
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() => handleEdit(s)}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Excluir">
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleDelete(s.id)}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </TableCell>
+              </TableRow>
             ))
           ) : (
-            <tr>
-              <td colSpan="7">Nenhum fornecedor encontrado</td>
-            </tr>
+            <TableRow>
+              <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                <Typography color="text.secondary">
+                  Nenhum fornecedor encontrado
+                </Typography>
+              </TableCell>
+            </TableRow>
           )}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 
