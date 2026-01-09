@@ -1,28 +1,21 @@
 import React from "react";
-import styles from "./StockTable.module.css";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 export default function StockTable({ items, loading, warehouseName }) {
-  if (loading) {
-    return (
-      <div className={styles.tableContainer}>
-        <p className={styles.loadingText}>Carregando itens do estoque...</p>
-      </div>
-    );
-  }
-
-  if (!items || items.length === 0) {
-    return (
-      <div className={styles.tableContainer}>
-        <div className={styles.emptyState}>
-          {warehouseName 
-            ? `Nenhum item encontrado no almoxarifado "${warehouseName}".`
-            : "Selecione um almoxarifado para visualizar o estoque."
-          }
-        </div>
-      </div>
-    );
-  }
-
   // Formatar data para exibição
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -30,38 +23,91 @@ export default function StockTable({ items, loading, warehouseName }) {
     return date.toLocaleDateString("pt-BR");
   };
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Carregando itens do estoque...</Typography>
+      </Box>
+    );
+  }
+
+  if (!items || items.length === 0) {
+    return (
+      <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }}>
+        <InventoryIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+        <Typography color="text.secondary">
+          {warehouseName 
+            ? `Nenhum item encontrado no almoxarifado "${warehouseName}".`
+            : "Selecione um almoxarifado para visualizar o estoque."
+          }
+        </Typography>
+      </Paper>
+    );
+  }
+
   return (
-    <div className={styles.tableContainer}>
+    <Box>
       {warehouseName && (
-        <h3 className={styles.warehouseTitle}>Estoque: {warehouseName}</h3>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <WarehouseIcon color="primary" />
+          <Typography variant="h6" component="h3">
+            Estoque: {warehouseName}
+          </Typography>
+        </Box>
       )}
       
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Nome do Item</th>
-            <th>Código</th>
-            <th>Unidade</th>
-            <th>Quantidade</th>
-            <th>Data de Entrada</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((itemWarehouse) => (
-            <tr key={itemWarehouse.id}>
-              <td>{itemWarehouse.Item?.nome || "-"}</td>
-              <td>{itemWarehouse.Item?.codigo_interno || "-"}</td>
-              <td>{itemWarehouse.Item?.unidade_medida || "-"}</td>
-              <td className={styles.quantityCell}>{itemWarehouse.quantidade}</td>
-              <td>{formatDate(itemWarehouse.data_entrada)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nome do Item</TableCell>
+              <TableCell>Código</TableCell>
+              <TableCell>Unidade</TableCell>
+              <TableCell align="center">Quantidade</TableCell>
+              <TableCell>Data de Entrada</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.map((itemWarehouse) => (
+              <TableRow key={itemWarehouse.id}>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <InventoryIcon fontSize="small" color="action" />
+                    {itemWarehouse.Item?.nome || "-"}
+                  </Box>
+                </TableCell>
+                <TableCell>{itemWarehouse.Item?.codigo_interno || "-"}</TableCell>
+                <TableCell>{itemWarehouse.Item?.unidade_medida || "-"}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    label={itemWarehouse.quantidade}
+                    color={itemWarehouse.quantidade > 0 ? "primary" : "default"}
+                    size="small"
+                    sx={{ fontWeight: 600, minWidth: 50 }}
+                  />
+                </TableCell>
+                <TableCell>{formatDate(itemWarehouse.data_entrada)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      <div className={styles.summary}>
-        Total de itens: <strong>{items.length}</strong>
-      </div>
-    </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          mt: 2,
+          p: 2,
+          backgroundColor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Total de itens: <strong>{items.length}</strong>
+        </Typography>
+      </Box>
+    </Box>
   );
 }

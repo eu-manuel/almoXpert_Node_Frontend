@@ -1,47 +1,104 @@
 import React from "react";
-import styles from "./WarehouseSelector.module.css";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
 
 export default function WarehouseSelector({ warehouses, selectedId, onSelect, loading }) {
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <label className={styles.label}>Almoxarifado</label>
-        <select className={styles.select} disabled>
-          <option>Carregando...</option>
-        </select>
-      </div>
-    );
-  }
+  // Encontrar o warehouse selecionado
+  const selectedWarehouse = warehouses?.find(
+    (w) => String(w.id_almoxarifado) === String(selectedId)
+  ) || null;
 
-  if (!warehouses || warehouses.length === 0) {
+  // Handler para mudança de seleção
+  const handleChange = (event, newValue) => {
+    onSelect(newValue ? String(newValue.id_almoxarifado) : null);
+  };
+
+  // Caso não tenha almoxarifados
+  if (!loading && (!warehouses || warehouses.length === 0)) {
     return (
-      <div className={styles.container}>
-        <label className={styles.label}>Almoxarifado</label>
-        <div className={styles.noWarehouses}>
+      <Box sx={{ mb: 3 }}>
+        <Alert severity="warning">
           Você não é responsável por nenhum almoxarifado.
-        </div>
-      </div>
+        </Alert>
+      </Box>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <label className={styles.label} htmlFor="warehouse-select">
-        Selecione o Almoxarifado
-      </label>
-      <select
-        id="warehouse-select"
-        className={styles.select}
-        value={selectedId || ""}
-        onChange={(e) => onSelect(e.target.value)}
-      >
-        <option value="">-- Selecione --</option>
-        {warehouses.map((warehouse) => (
-          <option key={warehouse.id_almoxarifado} value={warehouse.id_almoxarifado}>
-            {warehouse.nome}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Box sx={{ mb: 3, minWidth: 300, maxWidth: 400 }}>
+      <Autocomplete
+        value={selectedWarehouse}
+        onChange={handleChange}
+        options={warehouses || []}
+        getOptionLabel={(option) => option.nome || ""}
+        loading={loading}
+        loadingText="Carregando..."
+        noOptionsText="Nenhum almoxarifado encontrado"
+        isOptionEqualToValue={(option, value) => 
+          option.id_almoxarifado === value.id_almoxarifado
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            size="small" 
+            label="Selecione o Almoxarifado"
+            placeholder="Digite para buscar..."
+            variant="outlined"
+            sx={{
+              '& .MuiInputBase-root': {
+                backgroundColor: 'white',
+                color: '#333',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+                '&.Mui-focused': {
+                  backgroundColor: 'white',
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: '#333',
+              },
+              '& .MuiInputLabel-root': {
+                color: '#00000048',
+                fontWeight: 600,
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#16a34a',
+                fontWeight: 700,
+                backgroundColor: '#fff',
+                padding: '0 4px',
+                borderRadius: '4px',
+              },
+              '& .MuiInputLabel-root.MuiFormLabel-filled': {
+                color: '#16a34a',
+                fontWeight: 700,             
+                backgroundColor: '#fff',
+                padding: '0 4px',
+                borderRadius: '4px',
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#ccc',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#16a34a',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#16a34a',
+                  borderWidth: '2px',
+                },
+              },
+              '& .MuiAutocomplete-endAdornment': {
+                '& .MuiSvgIcon-root': {
+                  color: '#333',
+                },
+              },
+            }}
+          />
+        )}
+      />
+    </Box>
   );
 }
