@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createWarehouse } from "../services/warehouseServices";
+import { useState, useEffect } from "react";
+import { createWarehouse, updateWarehouse } from "../services/warehouseServices";
 import {
   Dialog,
   DialogTitle,
@@ -23,26 +23,67 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import EditIcon from "@mui/icons-material/Edit";
 
-export default function WarehouseFormModal({ onCreated }) {
-  const [open, setOpen] = useState(false);
+const emptyForm = {
+  nome: "",
+  descricao: "",
+  localizacao: "",
+  capacidade_maxima: "",
+  status: "ativo",
+};
+
+export default function WarehouseFormModal({ 
+  onCreated, 
+  onSaved,
+  warehouseToEdit = null,
+  open: externalOpen,
+  onClose: externalOnClose,
+  showFab = true,
+}) {
+  // Se open externo é fornecido, usa ele; senão usa estado interno
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
-    nome: "",
-    descricao: "",
-    localizacao: "",
-    capacidade_maxima: "",
-    status: "ativo",
-  });
+  const [form, setForm] = useState(emptyForm);
+
+  const isEditMode = !!warehouseToEdit;
+
+  // Preencher formulário quando entrar em modo edição
+  useEffect(() => {
+    if (warehouseToEdit) {
+      setForm({
+        nome: warehouseToEdit.nome || "",
+        descricao: warehouseToEdit.descricao || "",
+        localizacao: warehouseToEdit.localizacao || "",
+        capacidade_maxima: warehouseToEdit.capacidade_maxima || "",
+        status: warehouseToEdit.status || "ativo",
+      });
+    } else {
+      setForm(emptyForm);
+    }
+  }, [warehouseToEdit]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleClose = () => {
-    setOpen(false);
+    if (externalOnClose) {
+      externalOnClose();
+    } else {
+      setInternalOpen(false);
+    }
     setError("");
+    if (!isEditMode) {
+      setForm(emptyForm);
+    }
+  };
+
+  const handleOpen = () => {
+    setInternalOpen(true);
   };
 
   const handleSubmit = async (e) => {
@@ -63,13 +104,20 @@ export default function WarehouseFormModal({ onCreated }) {
         ...form,
         capacidade_maxima: form.capacidade_maxima ? parseInt(form.capacidade_maxima, 10) : null,
       };
-      await createWarehouse(dataToSend);
-      onCreated?.();
-      setForm({ nome: "", descricao: "", localizacao: "", capacidade_maxima: "", status: "ativo" });
-      setOpen(false);
+
+      if (isEditMode) {
+        await updateWarehouse(warehouseToEdit.id_almoxarifado, dataToSend);
+        onSaved?.();
+      } else {
+        await createWarehouse(dataToSend);
+        onCreated?.();
+      }
+      
+      setForm(emptyForm);
+      handleClose();
     } catch (err) {
-      console.error("Erro ao criar almoxarifado:", err);
-      setError(err.message || "Erro ao criar almoxarifado. Tente novamente.");
+      console.error(`Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado:`, err);
+      setError(err.message || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado. Tente novamente.`);
     } finally {
       setLoading(false);
     }
@@ -77,17 +125,19 @@ export default function WarehouseFormModal({ onCreated }) {
 
   return (
     <>
-      {/* FAB para abrir modal */}
-      <Tooltip title="Criar novo almoxarifado">
-        <Fab
-          color="secondary"
-          size="medium"
-          onClick={() => setOpen(true)}
-          sx={{ flexShrink: 0 }}
-        >
-          <AddBusinessIcon />
-        </Fab>
-      </Tooltip>
+      {/* FAB para abrir modal (apenas modo criação) */}
+      {showFab && !isEditMode && (
+        <Tooltip title="Criar novo almoxarifado">
+          <Fab
+            color="secondary"
+            size="medium"
+            onClick={handleOpen}
+            sx={{ flexShrink: 0 }}
+          >
+            <AddBusinessIcon />
+          </Fab>
+        </Tooltip>
+      )}
 
       <Dialog
         open={open}
@@ -109,8 +159,8 @@ export default function WarehouseFormModal({ onCreated }) {
           }}
         >
           <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
-            <WarehouseIcon color="primary" />
-            Novo Almoxarifado
+            {isEditMode ? <EditIcon color="primary" /> : <WarehouseIcon color="primary" />}
+            {isEditMode ? "Editar Almoxarifado" : "Novo Almoxarifado"}
           </Box>
           <IconButton
             onClick={handleClose}
@@ -253,7 +303,7 @@ export default function WarehouseFormModal({ onCreated }) {
                 disabled={loading}
                 startIcon={<SaveIcon />}
               >
-                {loading ? "Salvando..." : "Salvar"}
+                {loading ? "Salvando..." : isEditMode ? "Atualizar" : "Salvar"}
               </Button>
             </Box>
           </Box>
