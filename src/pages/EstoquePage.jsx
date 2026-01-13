@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import SideNav from "../components/SideNav";
 import WarehouseSelector from "../components/WarehouseSelector";
+import WarehouseFormModal from "../components/WarehouseFormModal";
 import StockTable from "../components/StockTable";
 import Modal from "../components/GenericModal";
 import AddStockForm from "../components/AddStockForm";
@@ -36,20 +37,21 @@ export default function EstoquePage() {
   // Estado para modal de adicionar item
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Função para buscar almoxarifados do usuário
+  const fetchWarehouses = async () => {
+    try {
+      setLoadingWarehouses(true);
+      const data = await getMyWarehouses();
+      setWarehouses(data);
+    } catch (err) {
+      console.error("Erro ao buscar almoxarifados:", err.message);
+    } finally {
+      setLoadingWarehouses(false);
+    }
+  };
+
   // Buscar almoxarifados do usuário ao carregar
   useEffect(() => {
-    const fetchWarehouses = async () => {
-      try {
-        setLoadingWarehouses(true);
-        const data = await getMyWarehouses();
-        setWarehouses(data);
-      } catch (err) {
-        console.error("Erro ao buscar almoxarifados:", err.message);
-      } finally {
-        setLoadingWarehouses(false);
-      }
-    };
-
     if (user) {
       fetchWarehouses();
     }
@@ -114,13 +116,16 @@ export default function EstoquePage() {
             </Typography>
           </Box>
 
-          <Box sx={{ mb: 3 }}>
-            <WarehouseSelector
-              warehouses={warehouses}
-              selectedId={selectedWarehouseId}
-              onSelect={setSelectedWarehouseId}
-              loading={loadingWarehouses}
-            />
+          <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ flex: 1 }}>
+              <WarehouseSelector
+                warehouses={warehouses}
+                selectedId={selectedWarehouseId}
+                onSelect={setSelectedWarehouseId}
+                loading={loadingWarehouses}
+              />
+            </Box>
+            <WarehouseFormModal onCreated={fetchWarehouses} />
           </Box>
 
           <StockTable
