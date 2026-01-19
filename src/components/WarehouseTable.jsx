@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { getMyWarehouses, deleteWarehouse } from "../services/warehouseServices";
+import React, { useEffect, useState, useContext } from "react";
+import { getMyWarehouses, deleteWarehouse, getWarehouseStats } from "../services/warehouseServices";
+import { UserContext } from "../context/UserContext";
 import {
   Table,
   TableBody,
@@ -14,15 +15,33 @@ import {
   Tooltip,
   CircularProgress,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import WarningIcon from "@mui/icons-material/Warning";
 
 const WarehouseTable = ({ refreshFlag, onEdit }) => {
+  const { user } = useContext(UserContext);
+  const isAdmin = user?.cargo === "admin";
+  
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Dialog de confirmação
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, warehouse: null, stats: null, loading: false });
+  
+  // Snackbar para mensagens
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
   const fetchWarehouses = async () => {
     try {
@@ -43,6 +62,35 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
       setWarehouses((prev) => prev.filter((w) => w.id_almoxarifado !== id));
     } catch (err) {
       console.error("Erro ao excluir almoxarifado:", err.message);
+    }
+  };
+
+  // Abrir dialog de confirmação com stats
+  const handleOpenDeleteDialog = async (warehouse) => {
+    setDeleteDialog({ open: true, warehouse, stats: null, loading: true });
+    try {
+      const stats = await getWarehouseStats(warehouse.id_almoxarifado);
+      setDeleteDialog((prev) => ({ ...prev, stats, loading: false }));
+    } catch (err) {
+      setDeleteDialog((prev) => ({ ...prev, loading: false }));
+      setSnackbar({ open: true, message: "Erro ao buscar estatísticas", severity: "error" });
+    }
+  };
+
+  // Confirmar exclusão
+  const handleConfirmDelete = async () => {
+    const { warehouse } = deleteDialog;
+    try {
+      const result = await deleteWarehouse(warehouse.id_almoxarifado);
+      setWarehouses((prev) => prev.filter((w) => w.id_almoxarifado !== warehouse.id_almoxarifado));
+      setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false });
+      setSnackbar({ 
+        open: true, 
+        message: `Almoxarifado excluído com sucesso! (${result.deletedLinks?.movements || 0} movimentações e ${result.deletedLinks?.items || 0} itens removidos)`,
+        severity: "success"
+      });
+    } catch (err) {
+      setSnackbar({ open: true, message: err.message || "Erro ao excluir almoxarifado", severity: "error" });
     }
   };
 
@@ -127,15 +175,17 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Excluir">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDelete(w.id_almoxarifado)}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
+                    {isAdmin && (
+                      <Tooltip title="Excluir (Admin)">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleOpenDeleteDialog(w)}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Box>
                 </TableCell>
               </TableRow>
@@ -152,6 +202,80 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
           )}
         </TableBody>
       </Table>
+      
+      {/* Dialog de confirmação de exclusão (Admin) */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false })}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <WarningIcon color="warning" />
+          Confirmar Exclusão
+        </DialogTitle>
+        <DialogContent>
+          {deleteDialog.loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+              <CircularProgress size={24} />
+              <Typography sx={{ ml: 2 }}>Carregando informações...</Typography>
+            </Box>
+          ) : (
+            <>
+              <DialogContentText sx={{ mb: 2 }}>
+                Você está prestes a excluir o almoxarifado <strong>{deleteDialog.warehouse?.nome}</strong>.
+              </DialogContentText>
+              
+              {deleteDialog.stats?.hasLinkedData && (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                  <Typography variant="body2">
+                    Este almoxarifado possui dados vinculados que também serão excluídos:
+                  </Typography>
+                  <Box component="ul" sx={{ mb: 0, mt: 1 }}>
+                    <li><strong>{deleteDialog.stats.movementsCount}</strong> movimentação(ões)</li>
+                    <li><strong>{deleteDialog.stats.itemsCount}</strong> item(ns) no estoque</li>
+                  </Box>
+                </Alert>
+              )}
+              
+              <DialogContentText color="error">
+                Esta ação é irreversível!
+              </DialogContentText>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false })}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleConfirmDelete} 
+            color="error" 
+            variant="contained"
+            disabled={deleteDialog.loading}
+          >
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar para mensagens */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </TableContainer>
   );
 };
