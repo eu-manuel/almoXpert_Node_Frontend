@@ -42,7 +42,9 @@ export default function EstoquePage() {
     try {
       setLoadingWarehouses(true);
       const data = await getMyWarehouses();
-      setWarehouses(data);
+      // Filtra apenas almoxarifados ativos
+      const activeWarehouses = data.filter(w => w.status === "ativo");
+      setWarehouses(activeWarehouses);
     } catch (err) {
       console.error("Erro ao buscar almoxarifados:", err.message);
     } finally {
