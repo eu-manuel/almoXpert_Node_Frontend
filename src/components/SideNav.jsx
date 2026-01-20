@@ -16,6 +16,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PeopleIcon from "@mui/icons-material/People";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -39,6 +40,7 @@ export default function SideNav() {
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: <HomeIcon /> },
     { name: "Estoque", path: "/items", icon: <InventoryIcon /> },
+    { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon /> },
     { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon /> },
     { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon /> },
     { name: "Configurações", path: "/settings", icon: <SettingsIcon /> },

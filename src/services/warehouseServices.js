@@ -82,3 +82,15 @@ export async function deleteWarehouse(id) {
   if (!res.ok) throw new Error(data.error || "Erro ao excluir almoxarifado");
   return data;
 }
+
+// Buscar estatísticas do almoxarifado (vínculos)
+export async function getWarehouseStats(id) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_URL}/warehouse/${id}/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Erro ao buscar estatísticas");
+  return data;
+}
