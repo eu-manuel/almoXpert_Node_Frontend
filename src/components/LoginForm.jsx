@@ -32,7 +32,7 @@ export default function LoginForm({ onLogin, onSwitchToRegister }) {
       const token = data.token;
       const payload = JSON.parse(atob(token.split(".")[1]));
 
-      onLogin({ email: payload.email, cargo: payload.cargo, id: payload.id, token });
+      onLogin({ email: payload.email, isAdmin: payload.isAdmin, id: payload.id, token });
     } catch (err) {
       setError(err.message);
     } finally {

@@ -32,7 +32,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 
 const WarehouseTable = ({ refreshFlag, onEdit }) => {
   const { user } = useContext(UserContext);
-  const isAdmin = user?.cargo === "admin";
+  const isAdminUser = user?.isAdmin === true;
   
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -175,7 +175,7 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    {isAdmin && (
+                    {isAdminUser && (
                       <Tooltip title="Excluir (Admin)">
                         <IconButton
                           size="small"
