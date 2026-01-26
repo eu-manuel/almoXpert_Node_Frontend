@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
-import { createWarehouse, updateWarehouse } from "../services/warehouseServices";
+import { useState, useEffect } from 'react';
+import {
+  createWarehouse,
+  updateWarehouse,
+} from '../services/warehouseServices';
 import {
   Dialog,
   DialogTitle,
@@ -14,27 +17,27 @@ import {
   InputAdornment,
   MenuItem,
   Tooltip,
-} from "@mui/material";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import CloseIcon from "@mui/icons-material/Close";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import DescriptionIcon from "@mui/icons-material/Description";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
-import EditIcon from "@mui/icons-material/Edit";
+} from '@mui/material';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
+import DescriptionIcon from '@mui/icons-material/Description';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import EditIcon from '@mui/icons-material/Edit';
 
 const emptyForm = {
-  nome: "",
-  descricao: "",
-  localizacao: "",
-  capacidade_maxima: "",
-  status: "ativo",
+  nome: '',
+  descricao: '',
+  localizacao: '',
+  capacidade_maxima: '',
+  status: 'ativo',
 };
 
-export default function WarehouseFormModal({ 
-  onCreated, 
+export default function WarehouseFormModal({
+  onCreated,
   onSaved,
   warehouseToEdit = null,
   open: externalOpen,
@@ -44,9 +47,9 @@ export default function WarehouseFormModal({
   // Se open externo é fornecido, usa ele; senão usa estado interno
   const [internalOpen, setInternalOpen] = useState(false);
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
-  
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [form, setForm] = useState(emptyForm);
 
   const isEditMode = !!warehouseToEdit;
@@ -55,11 +58,11 @@ export default function WarehouseFormModal({
   useEffect(() => {
     if (warehouseToEdit) {
       setForm({
-        nome: warehouseToEdit.nome || "",
-        descricao: warehouseToEdit.descricao || "",
-        localizacao: warehouseToEdit.localizacao || "",
-        capacidade_maxima: warehouseToEdit.capacidade_maxima || "",
-        status: warehouseToEdit.status || "ativo",
+        nome: warehouseToEdit.nome || '',
+        descricao: warehouseToEdit.descricao || '',
+        localizacao: warehouseToEdit.localizacao || '',
+        capacidade_maxima: warehouseToEdit.capacidade_maxima || '',
+        status: warehouseToEdit.status || 'ativo',
       });
     } else {
       setForm(emptyForm);
@@ -76,7 +79,7 @@ export default function WarehouseFormModal({
     } else {
       setInternalOpen(false);
     }
-    setError("");
+    setError('');
     if (!isEditMode) {
       setForm(emptyForm);
     }
@@ -89,11 +92,11 @@ export default function WarehouseFormModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     // Validação: nome é obrigatório
     if (!form.nome.trim()) {
-      setError("O nome do almoxarifado é obrigatório.");
+      setError('O nome do almoxarifado é obrigatório.');
       setLoading(false);
       return;
     }
@@ -102,7 +105,9 @@ export default function WarehouseFormModal({
       // Prepara dados, convertendo capacidade para número se preenchido
       const dataToSend = {
         ...form,
-        capacidade_maxima: form.capacidade_maxima ? parseInt(form.capacidade_maxima, 10) : null,
+        capacidade_maxima: form.capacidade_maxima
+          ? parseInt(form.capacidade_maxima, 10)
+          : null,
       };
 
       if (isEditMode) {
@@ -112,12 +117,18 @@ export default function WarehouseFormModal({
         await createWarehouse(dataToSend);
         onCreated?.();
       }
-      
+
       setForm(emptyForm);
       handleClose();
     } catch (err) {
-      console.error(`Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado:`, err);
-      setError(err.message || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado. Tente novamente.`);
+      console.error(
+        `Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado:`,
+        err
+      );
+      setError(
+        err.message ||
+          `Erro ao ${isEditMode ? 'atualizar' : 'criar'} almoxarifado. Tente novamente.`
+      );
     } finally {
       setLoading(false);
     }
@@ -158,9 +169,21 @@ export default function WarehouseFormModal({
             pb: 2,
           }}
         >
-          <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
-            {isEditMode ? <EditIcon color="primary" /> : <WarehouseIcon color="primary" />}
-            {isEditMode ? "Editar Almoxarifado" : "Novo Almoxarifado"}
+          <Box
+            component="span"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontWeight: 600,
+            }}
+          >
+            {isEditMode ? (
+              <EditIcon color="primary" />
+            ) : (
+              <WarehouseIcon color="primary" />
+            )}
+            {isEditMode ? 'Editar Almoxarifado' : 'Novo Almoxarifado'}
           </Box>
           <IconButton
             onClick={handleClose}
@@ -303,7 +326,7 @@ export default function WarehouseFormModal({
                 disabled={loading}
                 startIcon={<SaveIcon />}
               >
-                {loading ? "Salvando..." : isEditMode ? "Atualizar" : "Salvar"}
+                {loading ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Salvar'}
               </Button>
             </Box>
           </Box>

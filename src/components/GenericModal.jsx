@@ -1,14 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   IconButton,
   Box,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-export default function Modal({ title, isOpen, onClose, children, maxWidth = "sm" }) {
+export default function Modal({
+  title,
+  isOpen,
+  onClose,
+  children,
+  maxWidth = 'sm',
+}) {
   return (
     <Dialog
       open={isOpen}
@@ -48,9 +54,7 @@ export default function Modal({ title, isOpen, onClose, children, maxWidth = "sm
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ pt: 3 }}>
-        {children}
-      </DialogContent>
+      <DialogContent sx={{ pt: 3 }}>{children}</DialogContent>
     </Dialog>
   );
 }

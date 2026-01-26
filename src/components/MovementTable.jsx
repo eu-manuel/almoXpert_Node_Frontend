@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { getMovements } from "../services/movementServices";
+import React, { useEffect, useState } from 'react';
+import { getMovements } from '../services/movementServices';
 import {
   Table,
   TableBody,
@@ -12,11 +12,11 @@ import {
   Typography,
   Chip,
   CircularProgress,
-} from "@mui/material";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import TuneIcon from "@mui/icons-material/Tune";
+} from '@mui/material';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import TuneIcon from '@mui/icons-material/Tune';
 
 const MovementTable = ({ refreshFlag }) => {
   const [movements, setMovements] = useState([]);
@@ -41,40 +41,53 @@ const MovementTable = ({ refreshFlag }) => {
   // Formata o tipo da movimentação para exibição
   const formatTipo = (tipo) => {
     const tipos = {
-      entrada: "Entrada",
-      saida: "Saída",
-      transferencia: "Transferência",
-      ajuste: "Ajuste"
+      entrada: 'Entrada',
+      saida: 'Saída',
+      transferencia: 'Transferência',
+      ajuste: 'Ajuste',
     };
     return tipos[tipo] || tipo;
   };
 
   // Formata a data para exibição
   const formatData = (data) => {
-    if (!data) return "-";
-    return new Date(data).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+    if (!data) return '-';
+    return new Date(data).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   // Retorna cor e ícone baseado no tipo
   const getTipoConfig = (tipo) => {
     const config = {
-      entrada: { color: "success", icon: <ArrowDownwardIcon fontSize="small" /> },
-      saida: { color: "error", icon: <ArrowUpwardIcon fontSize="small" /> },
-      transferencia: { color: "info", icon: <SwapHorizIcon fontSize="small" /> },
-      ajuste: { color: "warning", icon: <TuneIcon fontSize="small" /> }
+      entrada: {
+        color: 'success',
+        icon: <ArrowDownwardIcon fontSize="small" />,
+      },
+      saida: { color: 'error', icon: <ArrowUpwardIcon fontSize="small" /> },
+      transferencia: {
+        color: 'info',
+        icon: <SwapHorizIcon fontSize="small" />,
+      },
+      ajuste: { color: 'warning', icon: <TuneIcon fontSize="small" /> },
     };
-    return config[tipo] || { color: "default", icon: null };
+    return config[tipo] || { color: 'default', icon: null };
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+        }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>Carregando movimentações...</Typography>
       </Box>
@@ -82,7 +95,11 @@ const MovementTable = ({ refreshFlag }) => {
   }
 
   return (
-    <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+    <TableContainer
+      component={Paper}
+      elevation={3}
+      sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -116,13 +133,25 @@ const MovementTable = ({ refreshFlag }) => {
                     <Typography
                       sx={{
                         fontWeight: 600,
-                        color: m.tipo === 'entrada' ? 'success.main' : m.tipo === 'saida' ? 'error.main' : 'text.primary'
+                        color:
+                          m.tipo === 'entrada'
+                            ? 'success.main'
+                            : m.tipo === 'saida'
+                              ? 'error.main'
+                              : 'text.primary',
                       }}
                     >
-                      {m.tipo === 'entrada' ? '+' : m.tipo === 'saida' ? '-' : ''}{m.quantidade}
+                      {m.tipo === 'entrada'
+                        ? '+'
+                        : m.tipo === 'saida'
+                          ? '-'
+                          : ''}
+                      {m.quantidade}
                     </Typography>
                   </TableCell>
-                  <TableCell>{m.Warehouse?.nome || `ID: ${m.id_almoxarifado}`}</TableCell>
+                  <TableCell>
+                    {m.Warehouse?.nome || `ID: ${m.id_almoxarifado}`}
+                  </TableCell>
                   <TableCell>{m.User?.nome || `ID: ${m.id_usuario}`}</TableCell>
                   <TableCell>
                     <Typography
@@ -135,7 +164,7 @@ const MovementTable = ({ refreshFlag }) => {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {m.observacao || "-"}
+                      {m.observacao || '-'}
                     </Typography>
                   </TableCell>
                 </TableRow>

@@ -1,22 +1,22 @@
-import { useState, useContext, useEffect } from "react";
-import SideNav from "../components/SideNav";
-import WarehouseSelector from "../components/WarehouseSelector";
-import WarehouseFormModal from "../components/WarehouseFormModal";
-import StockTable from "../components/StockTable";
-import Modal from "../components/GenericModal";
-import AddStockForm from "../components/AddStockForm";
-import { UserContext } from "../context/UserContext";
-import { getMyWarehouses } from "../services/warehouseServices";
-import { getItemsByWarehouse } from "../services/itemWarehouseServices";
+import { useState, useContext, useEffect } from 'react';
+import SideNav from '../components/SideNav';
+import WarehouseSelector from '../components/WarehouseSelector';
+import WarehouseFormModal from '../components/WarehouseFormModal';
+import StockTable from '../components/StockTable';
+import Modal from '../components/GenericModal';
+import AddStockForm from '../components/AddStockForm';
+import { UserContext } from '../context/UserContext';
+import { getMyWarehouses } from '../services/warehouseServices';
+import { getItemsByWarehouse } from '../services/itemWarehouseServices';
 import {
   Box,
   Container,
   Typography,
   Fab,
   CircularProgress,
-} from "@mui/material";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import AddIcon from "@mui/icons-material/Add";
+} from '@mui/material';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import AddIcon from '@mui/icons-material/Add';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -43,10 +43,10 @@ export default function EstoquePage() {
       setLoadingWarehouses(true);
       const data = await getMyWarehouses();
       // Filtra apenas almoxarifados ativos
-      const activeWarehouses = data.filter(w => w.status === "ativo");
+      const activeWarehouses = data.filter((w) => w.status === 'ativo');
       setWarehouses(activeWarehouses);
     } catch (err) {
-      console.error("Erro ao buscar almoxarifados:", err.message);
+      console.error('Erro ao buscar almoxarifados:', err.message);
     } finally {
       setLoadingWarehouses(false);
     }
@@ -71,7 +71,7 @@ export default function EstoquePage() {
       const data = await getItemsByWarehouse(selectedWarehouseId);
       setStockItems(data);
     } catch (err) {
-      console.error("Erro ao buscar itens do estoque:", err.message);
+      console.error('Erro ao buscar itens do estoque:', err.message);
       setStockItems([]);
     } finally {
       setLoadingItems(false);
@@ -90,7 +90,14 @@ export default function EstoquePage() {
 
   if (!user) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -99,7 +106,7 @@ export default function EstoquePage() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      
+
       <Box
         component="main"
         sx={{
@@ -169,4 +176,3 @@ export default function EstoquePage() {
     </Box>
   );
 }
-

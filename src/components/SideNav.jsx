@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   List,
@@ -12,16 +12,16 @@ import {
   Divider,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import HomeIcon from "@mui/icons-material/Home";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import PeopleIcon from "@mui/icons-material/People";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import almoXlogo from "/Logo Pequena AlmoXpert.png";
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
+import PeopleIcon from '@mui/icons-material/People';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import almoXlogo from '/Logo Pequena AlmoXpert.png';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -33,17 +33,17 @@ export default function SideNav() {
   const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
   };
 
   const menuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: <HomeIcon /> },
-    { name: "Estoque", path: "/items", icon: <InventoryIcon /> },
-    { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon /> },
-    { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon /> },
-    { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon /> },
-    { name: "Configurações", path: "/settings", icon: <SettingsIcon /> },
+    { name: 'Dashboard', path: '/dashboard', icon: <HomeIcon /> },
+    { name: 'Estoque', path: '/items', icon: <InventoryIcon /> },
+    { name: 'Almoxarifados', path: '/warehouses', icon: <WarehouseIcon /> },
+    { name: 'Fornecedores', path: '/suppliers', icon: <PeopleIcon /> },
+    { name: 'Movimentações', path: '/movements', icon: <SwapHorizIcon /> },
+    { name: 'Configurações', path: '/settings', icon: <SettingsIcon /> },
   ];
 
   const drawerContent = (
@@ -127,7 +127,10 @@ export default function SideNav() {
               <ListItemIcon
                 sx={{
                   minWidth: open ? 40 : 'auto',
-                  color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
+                  color:
+                    location.pathname === item.path
+                      ? 'primary.main'
+                      : 'text.secondary',
                 }}
               >
                 {item.icon}
@@ -200,7 +203,11 @@ export default function SideNav() {
           width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: isMobile ? DRAWER_WIDTH : (open ? DRAWER_WIDTH : COLLAPSED_WIDTH),
+            width: isMobile
+              ? DRAWER_WIDTH
+              : open
+                ? DRAWER_WIDTH
+                : COLLAPSED_WIDTH,
             boxSizing: 'border-box',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,

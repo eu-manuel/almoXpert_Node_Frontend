@@ -1,6 +1,6 @@
-import { useState } from "react";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
+import { useState } from 'react';
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
 
 export default function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,9 +13,7 @@ export default function AuthPage({ onLogin }) {
           onSwitchToRegister={() => setIsLogin(false)}
         />
       ) : (
-        <RegisterForm
-          onSwitchToLogin={() => setIsLogin(true)}
-        />
+        <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
       )}
     </>
   );

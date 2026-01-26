@@ -1,29 +1,22 @@
 // components/ItemForm.js
-import React, { useState, useEffect } from "react";
-import { createItem, updateItem } from "../services/itemServices";
-import {
-  Box,
-  TextField,
-  Button,
-  Grid,
-  MenuItem,
-  Alert,
-} from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
+import React, { useState, useEffect } from 'react';
+import { createItem, updateItem } from '../services/itemServices';
+import { Box, TextField, Button, Grid, MenuItem, Alert } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function ItemForm({ onClose, onSaved, itemToEdit }) {
   const [form, setForm] = useState({
-    nome: "",
-    descricao: "",
-    codigo_interno: "",
-    unidade_medida: "",
-    estoque_minimo: "",
-    estoque_maximo: "",
-    status: "",
+    nome: '',
+    descricao: '',
+    codigo_interno: '',
+    unidade_medida: '',
+    estoque_minimo: '',
+    estoque_maximo: '',
+    status: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // Se for edição, preencher com os dados existentes
   useEffect(() => {
@@ -35,17 +28,15 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
 
     setForm((prev) => ({
       ...prev,
-      [name]: type === "number" && value !== ""
-        ? Number(value)
-        : value,
+      [name]: type === 'number' && value !== '' ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    
+    setError('');
+
     try {
       if (itemToEdit) {
         await updateItem(itemToEdit.id_item, form);
@@ -55,37 +46,33 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
       onSaved?.();
       onClose();
     } catch (err) {
-      console.error("Erro ao salvar item:", err);
-      setError("Erro ao salvar item. Tente novamente.");
+      console.error('Erro ao salvar item:', err);
+      setError('Erro ao salvar item. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
 
   const statusOptions = [
-    { value: "ativo", label: "Ativo" },
-    { value: "inativo", label: "Inativo" },
-    { value: "descontinuado", label: "Descontinuado" },
+    { value: 'ativo', label: 'Ativo' },
+    { value: 'inativo', label: 'Inativo' },
+    { value: 'descontinuado', label: 'Descontinuado' },
   ];
 
   const unidadeOptions = [
-    { value: "un", label: "Unidade (un)" },
-    { value: "kg", label: "Quilograma (kg)" },
-    { value: "g", label: "Grama (g)" },
-    { value: "l", label: "Litro (l)" },
-    { value: "ml", label: "Mililitro (ml)" },
-    { value: "m", label: "Metro (m)" },
-    { value: "cm", label: "Centímetro (cm)" },
-    { value: "cx", label: "Caixa (cx)" },
-    { value: "pct", label: "Pacote (pct)" },
+    { value: 'un', label: 'Unidade (un)' },
+    { value: 'kg', label: 'Quilograma (kg)' },
+    { value: 'g', label: 'Grama (g)' },
+    { value: 'l', label: 'Litro (l)' },
+    { value: 'ml', label: 'Mililitro (ml)' },
+    { value: 'm', label: 'Metro (m)' },
+    { value: 'cm', label: 'Centímetro (cm)' },
+    { value: 'cx', label: 'Caixa (cx)' },
+    { value: 'pct', label: 'Pacote (pct)' },
   ];
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ pt: 1 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12 }}>
           <TextField
@@ -208,7 +195,7 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
           disabled={loading}
           startIcon={<SaveIcon />}
         >
-          {loading ? "Salvando..." : itemToEdit ? "Atualizar" : "Salvar"}
+          {loading ? 'Salvando...' : itemToEdit ? 'Atualizar' : 'Salvar'}
         </Button>
       </Box>
     </Box>

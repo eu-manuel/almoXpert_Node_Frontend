@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { login } from "../services/userServices";
+import { useState } from 'react';
+import { login } from '../services/userServices';
 import {
   Box,
   TextField,
@@ -9,30 +9,35 @@ import {
   IconButton,
   Alert,
   Link,
-} from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import EmailIcon from "@mui/icons-material/Email";
-import LockIcon from "@mui/icons-material/Lock";
+} from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
 
 export default function LoginForm({ onLogin, onSwitchToRegister }) {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
 
     try {
       const data = await login(email, senha);
       const token = data.token;
-      const payload = JSON.parse(atob(token.split(".")[1]));
+      const payload = JSON.parse(atob(token.split('.')[1]));
 
-      onLogin({ email: payload.email, isAdmin: payload.isAdmin, id: payload.id, token });
+      onLogin({
+        email: payload.email,
+        isAdmin: payload.isAdmin,
+        id: payload.id,
+        token,
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,7 +75,7 @@ export default function LoginForm({ onLogin, onSwitchToRegister }) {
 
       <TextField
         fullWidth
-        type={showPassword ? "text" : "password"}
+        type={showPassword ? 'text' : 'password'}
         label="Senha"
         placeholder="••••••••"
         value={senha}
@@ -104,11 +109,11 @@ export default function LoginForm({ onLogin, onSwitchToRegister }) {
         disabled={loading}
         sx={{ mt: 1 }}
       >
-        {loading ? "Entrando..." : "Entrar"}
+        {loading ? 'Entrando...' : 'Entrar'}
       </Button>
 
       <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-        Não tem uma conta?{" "}
+        Não tem uma conta?{' '}
         <Link
           component="button"
           type="button"

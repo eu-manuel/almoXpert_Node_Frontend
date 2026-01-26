@@ -1,14 +1,19 @@
-import React from "react";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
+import React from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 
-export default function WarehouseSelector({ warehouses, selectedId, onSelect, loading }) {
+export default function WarehouseSelector({
+  warehouses,
+  selectedId,
+  onSelect,
+  loading,
+}) {
   // Encontrar o warehouse selecionado
-  const selectedWarehouse = warehouses?.find(
-    (w) => String(w.id_almoxarifado) === String(selectedId)
-  ) || null;
+  const selectedWarehouse =
+    warehouses?.find((w) => String(w.id_almoxarifado) === String(selectedId)) ||
+    null;
 
   // Handler para mudança de seleção
   const handleChange = (event, newValue) => {
@@ -32,17 +37,17 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
         value={selectedWarehouse}
         onChange={handleChange}
         options={warehouses || []}
-        getOptionLabel={(option) => option.nome || ""}
+        getOptionLabel={(option) => option.nome || ''}
         loading={loading}
         loadingText="Carregando..."
         noOptionsText="Nenhum almoxarifado encontrado"
-        isOptionEqualToValue={(option, value) => 
+        isOptionEqualToValue={(option, value) =>
           option.id_almoxarifado === value.id_almoxarifado
         }
         renderInput={(params) => (
           <TextField
             {...params}
-            size="small" 
+            size="small"
             label="Selecione o Almoxarifado"
             placeholder="Digite para buscar..."
             variant="outlined"
@@ -73,7 +78,7 @@ export default function WarehouseSelector({ warehouses, selectedId, onSelect, lo
               },
               '& .MuiInputLabel-root.MuiFormLabel-filled': {
                 color: '#16a34a',
-                fontWeight: 700,             
+                fontWeight: 700,
                 backgroundColor: '#fff',
                 padding: '0 4px',
                 borderRadius: '4px',

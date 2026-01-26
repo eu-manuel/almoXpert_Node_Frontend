@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthPage from "../components/AuthPage";
-import { UserContext } from "../context/UserContext";
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthPage from '../components/AuthPage';
+import { UserContext } from '../context/UserContext';
+import { Box, Container, Paper, Typography } from '@mui/material';
 
 export default function LoginPage() {
   const { setUser } = useContext(UserContext);
@@ -13,11 +13,11 @@ export default function LoginPage() {
     setUser(userData);
 
     // opcional: salvar no localStorage para manter login após recarregar
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", userData.token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', userData.token);
 
     // redireciona para dashboard
-    navigate("/dashboard");
+    navigate('/dashboard');
   };
 
   return (
@@ -50,7 +50,7 @@ export default function LoginPage() {
               mb: 2,
             }}
           />
-          
+
           <Typography
             variant="h4"
             component="h1"
@@ -62,12 +62,8 @@ export default function LoginPage() {
           >
             AlmoXpert
           </Typography>
-          
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mb: 4 }}
-          >
+
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
             Sistema de Gestão de Almoxarifado
           </Typography>
 

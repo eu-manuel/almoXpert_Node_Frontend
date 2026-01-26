@@ -1,15 +1,10 @@
-import { useState, useContext } from "react";
-import SideNav from "../components/SideNav";
-import SupplierTable from "../components/SupplierTable";
-import SupplierFormModal from "../components/SupplierFormModal";
-import { UserContext } from "../context/UserContext";
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import PeopleIcon from "@mui/icons-material/People";
+import { useState, useContext } from 'react';
+import SideNav from '../components/SideNav';
+import SupplierTable from '../components/SupplierTable';
+import SupplierFormModal from '../components/SupplierFormModal';
+import { UserContext } from '../context/UserContext';
+import { Box, Container, Typography, CircularProgress } from '@mui/material';
+import PeopleIcon from '@mui/icons-material/People';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -21,7 +16,14 @@ export default function SupplierPage() {
 
   if (!user) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -30,7 +32,7 @@ export default function SupplierPage() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      
+
       <Box
         component="main"
         sx={{
@@ -50,7 +52,9 @@ export default function SupplierPage() {
           </Box>
 
           <SupplierTable refreshFlag={refreshFlag} />
-          <SupplierFormModal onCreated={() => setRefreshFlag(prev => !prev)} />
+          <SupplierFormModal
+            onCreated={() => setRefreshFlag((prev) => !prev)}
+          />
         </Container>
       </Box>
     </Box>

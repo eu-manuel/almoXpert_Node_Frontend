@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { getItems } from "../services/itemServices";
-import { createItemWarehouse } from "../services/itemWarehouseServices";
+import React, { useState, useEffect } from 'react';
+import { getItems } from '../services/itemServices';
+import { createItemWarehouse } from '../services/itemWarehouseServices';
 import {
   Box,
   TextField,
@@ -9,21 +9,26 @@ import {
   Autocomplete,
   Alert,
   CircularProgress,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CancelIcon from "@mui/icons-material/Cancel";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import CancelIcon from '@mui/icons-material/Cancel';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 
-export default function AddStockForm({ warehouseId, warehouseName, onClose, onSaved }) {
+export default function AddStockForm({
+  warehouseId,
+  warehouseName,
+  onClose,
+  onSaved,
+}) {
   const [items, setItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   const [form, setForm] = useState({
-    quantidade: "",
-    observacao: "",
+    quantidade: '',
+    observacao: '',
   });
 
   // Buscar lista de itens cadastrados
@@ -34,8 +39,8 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
         const data = await getItems();
         setItems(data);
       } catch (err) {
-        console.error("Erro ao buscar itens:", err.message);
-        setError("Erro ao carregar itens");
+        console.error('Erro ao buscar itens:', err.message);
+        setError('Erro ao carregar itens');
       } finally {
         setLoadingItems(false);
       }
@@ -47,21 +52,21 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
     const { name, value, type } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "number" && value !== "" ? Number(value) : value,
+      [name]: type === 'number' && value !== '' ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    
+    setError('');
+
     if (!selectedItem) {
-      setError("Selecione um item");
+      setError('Selecione um item');
       return;
     }
-    
+
     if (!form.quantidade || form.quantidade <= 0) {
-      setError("Informe uma quantidade válida");
+      setError('Informe uma quantidade válida');
       return;
     }
 
@@ -72,25 +77,21 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
         id_almoxarifado: Number(warehouseId),
         quantidade: Number(form.quantidade),
         data_entrada: new Date().toISOString(),
-        observacao: form.observacao || "Entrada de estoque",
+        observacao: form.observacao || 'Entrada de estoque',
       });
-      
+
       onSaved?.();
       onClose();
     } catch (err) {
-      console.error("Erro ao adicionar item:", err.message);
-      setError("Erro ao adicionar item ao estoque: " + err.message);
+      console.error('Erro ao adicionar item:', err.message);
+      setError('Erro ao adicionar item ao estoque: ' + err.message);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ pt: 1 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
       <Box
         sx={{
           display: 'flex',
@@ -113,7 +114,9 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Autocomplete
           options={items}
-          getOptionLabel={(option) => `${option.nome} (${option.codigo_interno || "sem código"})`}
+          getOptionLabel={(option) =>
+            `${option.nome} (${option.codigo_interno || 'sem código'})`
+          }
           value={selectedItem}
           onChange={(_, newValue) => setSelectedItem(newValue)}
           loading={loadingItems}
@@ -126,7 +129,9 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
                 ...params.InputProps,
                 endAdornment: (
                   <>
-                    {loadingItems ? <CircularProgress color="inherit" size={20} /> : null}
+                    {loadingItems ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
                     {params.InputProps.endAdornment}
                   </>
                 ),
@@ -190,7 +195,7 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
           disabled={submitting}
           startIcon={<AddIcon />}
         >
-          {submitting ? "Salvando..." : "Adicionar ao Estoque"}
+          {submitting ? 'Salvando...' : 'Adicionar ao Estoque'}
         </Button>
       </Box>
     </Box>
