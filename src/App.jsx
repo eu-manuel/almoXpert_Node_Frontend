@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import ItemsPage from "./pages/ItemsPage";
 import EstoquePage from "./pages/EstoquePage";
 import WarehousePage from "./pages/WarehousePage";
 import SupplierPage from "./pages/SupplierPage";
@@ -29,6 +30,11 @@ function App() {
 
         <Route
           path="/items"
+          element={user ? <ItemsPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/stock"
           element={user ? <EstoquePage /> : <Navigate to="/login" />}
         />
 
