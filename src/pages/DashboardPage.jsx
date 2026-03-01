@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
-import SideNav from "../components/SideNav";
-import BarChartComponent from "../components/BarChartComponent";
-import LineChartComponent from "../components/LineChartComponent";
-import PieChartComponent from "../components/PieChartComponent";
-import { UserContext } from "../context/UserContext";
+import { useState, useContext } from 'react';
+import SideNav from '../components/SideNav';
+import BarChartComponent from '../components/BarChartComponent';
+import LineChartComponent from '../components/LineChartComponent';
+import PieChartComponent from '../components/PieChartComponent';
+import { UserContext } from '../context/UserContext';
 import {
   Box,
   Container,
@@ -11,8 +11,8 @@ import {
   Grid,
   Paper,
   CircularProgress,
-} from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+} from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -23,7 +23,14 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -32,7 +39,7 @@ export default function DashboardPage() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      
+
       <Box
         component="main"
         sx={{

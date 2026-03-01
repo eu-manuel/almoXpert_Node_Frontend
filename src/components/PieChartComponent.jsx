@@ -1,14 +1,14 @@
-import React from "react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import React from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const data = [
-  { name: "Ativo", value: 420 },
-  { name: "Inativo", value: 80 },
-  { name: "Em manutenção", value: 50 },
-  { name: "Esgotado", value: 30 },
+  { name: 'Ativo', value: 420 },
+  { name: 'Inativo', value: 80 },
+  { name: 'Em manutenção', value: 50 },
+  { name: 'Esgotado', value: 30 },
 ];
 
-const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28"];
+const COLORS = ['#0088FE', '#FF8042', '#00C49F', '#FFBB28'];
 
 export default function PieChartComponent() {
   return (

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { getItems, deleteItem } from "../services/itemServices";
-import Modal from "./GenericModal";
-import ItemForm from "./ItemForm";
+import React, { useEffect, useState } from 'react';
+import { getItems, deleteItem } from '../services/itemServices';
+import Modal from './GenericModal';
+import ItemForm from './ItemForm';
 import {
   Table,
   TableBody,
@@ -17,11 +17,11 @@ import {
   Typography,
   Chip,
   CircularProgress,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import InventoryIcon from "@mui/icons-material/Inventory";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 export default function ItemTable() {
   const [items, setItems] = useState([]);
@@ -42,7 +42,7 @@ export default function ItemTable() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este item?")) return;
+    if (!window.confirm('Tem certeza que deseja excluir este item?')) return;
     try {
       await deleteItem(id);
       setItems((prev) => prev.filter((i) => i.id_item !== id));
@@ -62,20 +62,27 @@ export default function ItemTable() {
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case "ativo":
-        return "success";
-      case "inativo":
-        return "default";
-      case "descontinuado":
-        return "error";
+      case 'ativo':
+        return 'success';
+      case 'inativo':
+        return 'default';
+      case 'descontinuado':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+        }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>Carregando itens...</Typography>
       </Box>
@@ -86,7 +93,10 @@ export default function ItemTable() {
     <Box sx={{ position: 'relative' }}>
       <Fab
         color="primary"
-        onClick={() => { setItemToEdit(null); setModalOpen(true); }}
+        onClick={() => {
+          setItemToEdit(null);
+          setModalOpen(true);
+        }}
         sx={{
           position: 'fixed',
           bottom: 24,
@@ -96,7 +106,11 @@ export default function ItemTable() {
         <AddIcon />
       </Fab>
 
-      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+      <TableContainer
+        component={Paper}
+        elevation={3}
+        sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -120,11 +134,15 @@ export default function ItemTable() {
                       {item.nome}
                     </Box>
                   </TableCell>
-                  <TableCell>{item.descricao || "-"}</TableCell>
-                  <TableCell>{item.codigo_interno || "-"}</TableCell>
-                  <TableCell>{item.unidade_medida || "-"}</TableCell>
-                  <TableCell align="center">{item.estoque_minimo ?? "-"}</TableCell>
-                  <TableCell align="center">{item.estoque_maximo ?? "-"}</TableCell>
+                  <TableCell>{item.descricao || '-'}</TableCell>
+                  <TableCell>{item.codigo_interno || '-'}</TableCell>
+                  <TableCell>{item.unidade_medida || '-'}</TableCell>
+                  <TableCell align="center">
+                    {item.estoque_minimo ?? '-'}
+                  </TableCell>
+                  <TableCell align="center">
+                    {item.estoque_maximo ?? '-'}
+                  </TableCell>
                   <TableCell align="center">
                     {item.status && (
                       <Chip
@@ -135,7 +153,13 @@ export default function ItemTable() {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: 0.5,
+                      }}
+                    >
                       <Tooltip title="Editar">
                         <IconButton
                           size="small"
@@ -172,7 +196,7 @@ export default function ItemTable() {
       </TableContainer>
 
       <Modal
-        title={itemToEdit ? "Editar Item" : "Novo Item"}
+        title={itemToEdit ? 'Editar Item' : 'Novo Item'}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
       >

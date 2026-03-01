@@ -1,14 +1,9 @@
-import { useState, useContext } from "react";
-import SideNav from "../components/SideNav";
-import MovementTable from "../components/MovementTable";
-import { UserContext } from "../context/UserContext";
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { useState, useContext } from 'react';
+import SideNav from '../components/SideNav';
+import MovementTable from '../components/MovementTable';
+import { UserContext } from '../context/UserContext';
+import { Box, Container, Typography, CircularProgress } from '@mui/material';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -20,7 +15,14 @@ export default function MovementPage() {
 
   if (!user) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -29,7 +31,7 @@ export default function MovementPage() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      
+
       <Box
         component="main"
         sx={{
@@ -47,9 +49,10 @@ export default function MovementPage() {
               Histórico de Movimentações
             </Typography>
           </Box>
-          
+
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-            Acompanhe todas as entradas, saídas, transferências e ajustes de estoque.
+            Acompanhe todas as entradas, saídas, transferências e ajustes de
+            estoque.
           </Typography>
 
           <MovementTable refreshFlag={refreshFlag} />
