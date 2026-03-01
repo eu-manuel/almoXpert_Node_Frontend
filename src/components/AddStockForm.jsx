@@ -17,17 +17,22 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-export default function AddStockForm({ warehouseId, warehouseName, onClose, onSaved }) {
+export default function AddStockForm({
+  warehouseId,
+  warehouseName,
+  onClose,
+  onSaved,
+}) {
   const [items, setItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [createItemModalOpen, setCreateItemModalOpen] = useState(false);
   
   const [form, setForm] = useState({
-    quantidade: "",
-    observacao: "",
+    quantidade: '',
+    observacao: '',
   });
 
   // Buscar lista de itens cadastrados
@@ -65,21 +70,21 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
     const { name, value, type } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "number" && value !== "" ? Number(value) : value,
+      [name]: type === 'number' && value !== '' ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    
+    setError('');
+
     if (!selectedItem) {
-      setError("Selecione um item");
+      setError('Selecione um item');
       return;
     }
-    
+
     if (!form.quantidade || form.quantidade <= 0) {
-      setError("Informe uma quantidade válida");
+      setError('Informe uma quantidade válida');
       return;
     }
 
@@ -90,25 +95,21 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
         id_almoxarifado: Number(warehouseId),
         quantidade: Number(form.quantidade),
         data_entrada: new Date().toISOString(),
-        observacao: form.observacao || "Entrada de estoque",
+        observacao: form.observacao || 'Entrada de estoque',
       });
-      
+
       onSaved?.();
       onClose();
     } catch (err) {
-      console.error("Erro ao adicionar item:", err.message);
-      setError("Erro ao adicionar item ao estoque: " + err.message);
+      console.error('Erro ao adicionar item:', err.message);
+      setError('Erro ao adicionar item ao estoque: ' + err.message);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ pt: 1 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} sx={{ pt: 1 }}>
       <Box
         sx={{
           display: 'flex',
@@ -220,7 +221,7 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
           disabled={submitting}
           startIcon={<AddIcon />}
         >
-          {submitting ? "Salvando..." : "Adicionar ao Estoque"}
+          {submitting ? 'Salvando...' : 'Adicionar ao Estoque'}
         </Button>
       </Box>
 

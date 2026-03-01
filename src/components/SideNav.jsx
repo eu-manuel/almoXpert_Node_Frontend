@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   List,
@@ -34,7 +34,7 @@ export default function SideNav() {
   const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.reload();
   };
 
@@ -129,7 +129,10 @@ export default function SideNav() {
               <ListItemIcon
                 sx={{
                   minWidth: open ? 40 : 'auto',
-                  color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
+                  color:
+                    location.pathname === item.path
+                      ? 'primary.main'
+                      : 'text.secondary',
                 }}
               >
                 {item.icon}
@@ -202,7 +205,11 @@ export default function SideNav() {
           width: open ? DRAWER_WIDTH : COLLAPSED_WIDTH,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: isMobile ? DRAWER_WIDTH : (open ? DRAWER_WIDTH : COLLAPSED_WIDTH),
+            width: isMobile
+              ? DRAWER_WIDTH
+              : open
+                ? DRAWER_WIDTH
+                : COLLAPSED_WIDTH,
             boxSizing: 'border-box',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,

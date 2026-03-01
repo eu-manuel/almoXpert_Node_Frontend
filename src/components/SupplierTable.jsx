@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { getSuppliers, updateSupplier, deleteSupplier } from "../services/supplierServices";
+import React, { useEffect, useState } from 'react';
+import {
+  getSuppliers,
+  updateSupplier,
+  deleteSupplier,
+} from '../services/supplierServices';
 import {
   Table,
   TableBody,
@@ -13,10 +17,10 @@ import {
   IconButton,
   Tooltip,
   CircularProgress,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BusinessIcon from "@mui/icons-material/Business";
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import BusinessIcon from '@mui/icons-material/Business';
 
 const SupplierTable = ({ refreshFlag }) => {
   const [suppliers, setSuppliers] = useState([]);
@@ -35,7 +39,8 @@ const SupplierTable = ({ refreshFlag }) => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este fornecedor?")) return;
+    if (!window.confirm('Tem certeza que deseja excluir este fornecedor?'))
+      return;
     try {
       await deleteSupplier(id);
       setSuppliers((prev) => prev.filter((s) => s.id !== id));
@@ -45,11 +50,16 @@ const SupplierTable = ({ refreshFlag }) => {
   };
 
   const handleEdit = async (supplier) => {
-    const novoNome = prompt("Novo nome:", supplier.nome);
+    const novoNome = prompt('Novo nome:', supplier.nome);
     if (!novoNome) return;
     try {
-      const updated = await updateSupplier(supplier.id, { ...supplier, nome: novoNome });
-      setSuppliers((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+      const updated = await updateSupplier(supplier.id, {
+        ...supplier,
+        nome: novoNome,
+      });
+      setSuppliers((prev) =>
+        prev.map((s) => (s.id === updated.id ? updated : s))
+      );
     } catch (err) {
       console.error(err.message);
     }
@@ -61,7 +71,14 @@ const SupplierTable = ({ refreshFlag }) => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+        }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>Carregando fornecedores...</Typography>
       </Box>
@@ -69,7 +86,11 @@ const SupplierTable = ({ refreshFlag }) => {
   }
 
   return (
-    <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+    <TableContainer
+      component={Paper}
+      elevation={3}
+      sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -91,9 +112,9 @@ const SupplierTable = ({ refreshFlag }) => {
                     {s.nome}
                   </Box>
                 </TableCell>
-                <TableCell>{s.CNPJ || "-"}</TableCell>
-                <TableCell>{s.telefone || "-"}</TableCell>
-                <TableCell>{s.email || "-"}</TableCell>
+                <TableCell>{s.CNPJ || '-'}</TableCell>
+                <TableCell>{s.telefone || '-'}</TableCell>
+                <TableCell>{s.email || '-'}</TableCell>
                 <TableCell>
                   <Typography
                     variant="body2"
@@ -104,11 +125,13 @@ const SupplierTable = ({ refreshFlag }) => {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {s.endereco || "-"}
+                    {s.endereco || '-'}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}
+                  >
                     <Tooltip title="Editar">
                       <IconButton
                         size="small"

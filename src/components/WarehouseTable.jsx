@@ -1,6 +1,10 @@
-import React, { useEffect, useState, useContext } from "react";
-import { getMyWarehouses, deleteWarehouse, getWarehouseStats } from "../services/warehouseServices";
-import { UserContext } from "../context/UserContext";
+import React, { useEffect, useState, useContext } from 'react';
+import {
+  getMyWarehouses,
+  deleteWarehouse,
+  getWarehouseStats,
+} from '../services/warehouseServices';
+import { UserContext } from '../context/UserContext';
 import {
   Table,
   TableBody,
@@ -23,25 +27,34 @@ import {
   Button,
   Alert,
   Snackbar,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import WarningIcon from "@mui/icons-material/Warning";
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const WarehouseTable = ({ refreshFlag, onEdit }) => {
   const { user } = useContext(UserContext);
   const isAdminUser = user?.isAdmin === true;
-  
+
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Dialog de confirmação
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, warehouse: null, stats: null, loading: false });
-  
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    warehouse: null,
+    stats: null,
+    loading: false,
+  });
+
   // Snackbar para mensagens
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   const fetchWarehouses = async () => {
     try {
@@ -49,19 +62,20 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
       const data = await getMyWarehouses();
       setWarehouses(data);
     } catch (err) {
-      console.error("Erro ao buscar almoxarifados:", err.message);
+      console.error('Erro ao buscar almoxarifados:', err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este almoxarifado?")) return;
+    if (!window.confirm('Tem certeza que deseja excluir este almoxarifado?'))
+      return;
     try {
       await deleteWarehouse(id);
       setWarehouses((prev) => prev.filter((w) => w.id_almoxarifado !== id));
     } catch (err) {
-      console.error("Erro ao excluir almoxarifado:", err.message);
+      console.error('Erro ao excluir almoxarifado:', err.message);
     }
   };
 
@@ -73,7 +87,11 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
       setDeleteDialog((prev) => ({ ...prev, stats, loading: false }));
     } catch (err) {
       setDeleteDialog((prev) => ({ ...prev, loading: false }));
-      setSnackbar({ open: true, message: "Erro ao buscar estatísticas", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: 'Erro ao buscar estatísticas',
+        severity: 'error',
+      });
     }
   };
 
@@ -82,15 +100,26 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
     const { warehouse } = deleteDialog;
     try {
       const result = await deleteWarehouse(warehouse.id_almoxarifado);
-      setWarehouses((prev) => prev.filter((w) => w.id_almoxarifado !== warehouse.id_almoxarifado));
-      setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false });
-      setSnackbar({ 
-        open: true, 
+      setWarehouses((prev) =>
+        prev.filter((w) => w.id_almoxarifado !== warehouse.id_almoxarifado)
+      );
+      setDeleteDialog({
+        open: false,
+        warehouse: null,
+        stats: null,
+        loading: false,
+      });
+      setSnackbar({
+        open: true,
         message: `Almoxarifado excluído com sucesso! (${result.deletedLinks?.movements || 0} movimentações e ${result.deletedLinks?.items || 0} itens removidos)`,
-        severity: "success"
+        severity: 'success',
       });
     } catch (err) {
-      setSnackbar({ open: true, message: err.message || "Erro ao excluir almoxarifado", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: err.message || 'Erro ao excluir almoxarifado',
+        severity: 'error',
+      });
     }
   };
 
@@ -100,7 +129,14 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+        }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>Carregando almoxarifados...</Typography>
       </Box>
@@ -108,7 +144,11 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
   }
 
   return (
-    <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+    <TableContainer
+      component={Paper}
+      elevation={3}
+      sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -140,32 +180,38 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {w.descricao || "-"}
+                    {w.descricao || '-'}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   {w.localizacao ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                    >
                       <LocationOnIcon fontSize="small" color="action" />
                       {w.localizacao}
                     </Box>
                   ) : (
-                    "-"
+                    '-'
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  {w.capacidade_maxima ? w.capacidade_maxima.toLocaleString('pt-BR') : "-"}
+                  {w.capacidade_maxima
+                    ? w.capacidade_maxima.toLocaleString('pt-BR')
+                    : '-'}
                 </TableCell>
                 <TableCell align="center">
                   <Chip
-                    label={w.status === "ativo" ? "Ativo" : "Inativo"}
-                    color={w.status === "ativo" ? "success" : "default"}
+                    label={w.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                    color={w.status === 'ativo' ? 'success' : 'default'}
                     size="small"
                     variant="outlined"
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}
+                  >
                     <Tooltip title="Editar">
                       <IconButton
                         size="small"
@@ -193,7 +239,9 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
           ) : (
             <TableRow>
               <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
-                <WarehouseIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+                <WarehouseIcon
+                  sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }}
+                />
                 <Typography color="text.secondary">
                   Nenhum almoxarifado encontrado
                 </Typography>
@@ -202,11 +250,18 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
           )}
         </TableBody>
       </Table>
-      
+
       {/* Dialog de confirmação de exclusão (Admin) */}
       <Dialog
         open={deleteDialog.open}
-        onClose={() => setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false })}
+        onClose={() =>
+          setDeleteDialog({
+            open: false,
+            warehouse: null,
+            stats: null,
+            loading: false,
+          })
+        }
         maxWidth="sm"
         fullWidth
       >
@@ -223,21 +278,29 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
           ) : (
             <>
               <DialogContentText sx={{ mb: 2 }}>
-                Você está prestes a excluir o almoxarifado <strong>{deleteDialog.warehouse?.nome}</strong>.
+                Você está prestes a excluir o almoxarifado{' '}
+                <strong>{deleteDialog.warehouse?.nome}</strong>.
               </DialogContentText>
-              
+
               {deleteDialog.stats?.hasLinkedData && (
                 <Alert severity="warning" sx={{ mb: 2 }}>
                   <Typography variant="body2">
-                    Este almoxarifado possui dados vinculados que também serão excluídos:
+                    Este almoxarifado possui dados vinculados que também serão
+                    excluídos:
                   </Typography>
                   <Box component="ul" sx={{ mb: 0, mt: 1 }}>
-                    <li><strong>{deleteDialog.stats.movementsCount}</strong> movimentação(ões)</li>
-                    <li><strong>{deleteDialog.stats.itemsCount}</strong> item(ns) no estoque</li>
+                    <li>
+                      <strong>{deleteDialog.stats.movementsCount}</strong>{' '}
+                      movimentação(ões)
+                    </li>
+                    <li>
+                      <strong>{deleteDialog.stats.itemsCount}</strong> item(ns)
+                      no estoque
+                    </li>
                   </Box>
                 </Alert>
               )}
-              
+
               <DialogContentText color="error">
                 Esta ação é irreversível!
               </DialogContentText>
@@ -245,14 +308,21 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={() => setDeleteDialog({ open: false, warehouse: null, stats: null, loading: false })}
+          <Button
+            onClick={() =>
+              setDeleteDialog({
+                open: false,
+                warehouse: null,
+                stats: null,
+                loading: false,
+              })
+            }
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleConfirmDelete} 
-            color="error" 
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
             variant="contained"
             disabled={deleteDialog.loading}
           >
@@ -268,8 +338,8 @@ const WarehouseTable = ({ refreshFlag, onEdit }) => {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >

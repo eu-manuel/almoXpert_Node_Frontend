@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createSupplier } from "../services/supplierServices";
+import { useState } from 'react';
+import { createSupplier } from '../services/supplierServices';
 import {
   Dialog,
   DialogTitle,
@@ -12,27 +12,27 @@ import {
   IconButton,
   Alert,
   InputAdornment,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import BusinessIcon from "@mui/icons-material/Business";
-import BadgeIcon from "@mui/icons-material/Badge";
-import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import BusinessIcon from '@mui/icons-material/Business';
+import BadgeIcon from '@mui/icons-material/Badge';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 export default function SupplierFormModal({ onCreated }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
-    nome: "",
-    CNPJ: "",
-    telefone: "",
-    email: "",
-    endereco: "",
+    nome: '',
+    CNPJ: '',
+    telefone: '',
+    email: '',
+    endereco: '',
   });
 
   const handleChange = (e) => {
@@ -41,22 +41,22 @@ export default function SupplierFormModal({ onCreated }) {
 
   const handleClose = () => {
     setOpen(false);
-    setError("");
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    
+    setError('');
+
     try {
       await createSupplier(form);
       onCreated?.();
-      setForm({ nome: "", CNPJ: "", telefone: "", email: "", endereco: "" });
+      setForm({ nome: '', CNPJ: '', telefone: '', email: '', endereco: '' });
       setOpen(false);
     } catch (err) {
-      console.error("Erro ao salvar fornecedor:", err);
-      setError("Erro ao salvar fornecedor. Tente novamente.");
+      console.error('Erro ao salvar fornecedor:', err);
+      setError('Erro ao salvar fornecedor. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -236,7 +236,7 @@ export default function SupplierFormModal({ onCreated }) {
                 disabled={loading}
                 startIcon={<SaveIcon />}
               >
-                {loading ? "Salvando..." : "Salvar"}
+                {loading ? 'Salvando...' : 'Salvar'}
               </Button>
             </Box>
           </Box>

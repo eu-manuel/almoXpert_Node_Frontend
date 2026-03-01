@@ -1,15 +1,10 @@
-import { useState, useContext } from "react";
-import SideNav from "../components/SideNav";
-import WarehouseTable from "../components/WarehouseTable";
-import WarehouseFormModal from "../components/WarehouseFormModal";
-import { UserContext } from "../context/UserContext";
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
+import { useState, useContext } from 'react';
+import SideNav from '../components/SideNav';
+import WarehouseTable from '../components/WarehouseTable';
+import WarehouseFormModal from '../components/WarehouseFormModal';
+import { UserContext } from '../context/UserContext';
+import { Box, Container, Typography, CircularProgress } from '@mui/material';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -40,7 +35,14 @@ export default function WarehousePage() {
 
   if (!user) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -49,7 +51,7 @@ export default function WarehousePage() {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <SideNav open={menuOpen} setOpen={setMenuOpen} />
-      
+
       <Box
         component="main"
         sx={{
@@ -68,10 +70,7 @@ export default function WarehousePage() {
             </Typography>
           </Box>
 
-          <WarehouseTable 
-            refreshFlag={refreshFlag} 
-            onEdit={handleEdit} 
-          />
+          <WarehouseTable refreshFlag={refreshFlag} onEdit={handleEdit} />
 
           {/* FAB para criar novo almoxarifado */}
           <Box sx={{ position: 'fixed', bottom: 24, right: 24 }}>

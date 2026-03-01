@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Table,
   TableBody,
@@ -11,21 +11,28 @@ import {
   Typography,
   Chip,
   CircularProgress,
-} from "@mui/material";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
-import InventoryIcon from "@mui/icons-material/Inventory";
+} from '@mui/material';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 export default function StockTable({ items, loading, warehouseName }) {
   // Formatar data para exibição
   const formatDate = (dateString) => {
-    if (!dateString) return "-";
+    if (!dateString) return '-';
     const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR");
+    return date.toLocaleDateString('pt-BR');
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+        }}
+      >
         <CircularProgress />
         <Typography sx={{ ml: 2 }}>Carregando itens do estoque...</Typography>
       </Box>
@@ -37,10 +44,9 @@ export default function StockTable({ items, loading, warehouseName }) {
       <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }}>
         <InventoryIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
         <Typography color="text.secondary">
-          {warehouseName 
+          {warehouseName
             ? `Nenhum item encontrado no almoxarifado "${warehouseName}".`
-            : "Selecione um almoxarifado para visualizar o estoque."
-          }
+            : 'Selecione um almoxarifado para visualizar o estoque.'}
         </Typography>
       </Paper>
     );
@@ -56,8 +62,12 @@ export default function StockTable({ items, loading, warehouseName }) {
           </Typography>
         </Box>
       )}
-      
-      <TableContainer component={Paper} elevation={3} sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+
+      <TableContainer
+        component={Paper}
+        elevation={3}
+        sx={{ borderRadius: 2, border: '1px solid rgba(255, 255, 255, 0.1)' }}
+      >
         <Table>
           <TableHead>
             <TableRow>
@@ -74,15 +84,19 @@ export default function StockTable({ items, loading, warehouseName }) {
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <InventoryIcon fontSize="small" color="action" />
-                    {itemWarehouse.Item?.nome || "-"}
+                    {itemWarehouse.Item?.nome || '-'}
                   </Box>
                 </TableCell>
-                <TableCell>{itemWarehouse.Item?.codigo_interno || "-"}</TableCell>
-                <TableCell>{itemWarehouse.Item?.unidade_medida || "-"}</TableCell>
+                <TableCell>
+                  {itemWarehouse.Item?.codigo_interno || '-'}
+                </TableCell>
+                <TableCell>
+                  {itemWarehouse.Item?.unidade_medida || '-'}
+                </TableCell>
                 <TableCell align="center">
                   <Chip
                     label={itemWarehouse.quantidade}
-                    color={itemWarehouse.quantidade > 0 ? "primary" : "default"}
+                    color={itemWarehouse.quantidade > 0 ? 'primary' : 'default'}
                     size="small"
                     sx={{ fontWeight: 600, minWidth: 50 }}
                   />
