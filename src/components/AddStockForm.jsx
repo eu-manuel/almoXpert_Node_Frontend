@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getItems } from "../services/itemServices";
 import { createItemWarehouse } from "../services/itemWarehouseServices";
+import Modal from "./GenericModal";
+import ItemForm from "./ItemForm";
 import {
   Box,
   TextField,
@@ -13,6 +15,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import CancelIcon from "@mui/icons-material/Cancel";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function AddStockForm({ warehouseId, warehouseName, onClose, onSaved }) {
   const [items, setItems] = useState([]);
@@ -20,6 +23,7 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [createItemModalOpen, setCreateItemModalOpen] = useState(false);
   
   const [form, setForm] = useState({
     quantidade: "",
@@ -27,21 +31,35 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
   });
 
   // Buscar lista de itens cadastrados
+  const fetchItems = async () => {
+    try {
+      setLoadingItems(true);
+      const data = await getItems();
+      setItems(data);
+      return data;
+    } catch (err) {
+      console.error("Erro ao buscar itens:", err.message);
+      setError("Erro ao carregar itens");
+      return [];
+    } finally {
+      setLoadingItems(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoadingItems(true);
-        const data = await getItems();
-        setItems(data);
-      } catch (err) {
-        console.error("Erro ao buscar itens:", err.message);
-        setError("Erro ao carregar itens");
-      } finally {
-        setLoadingItems(false);
-      }
-    };
     fetchItems();
   }, []);
+
+  // Callback quando um novo item é criado pelo ItemForm
+  const handleItemCreated = async () => {
+    const updatedItems = await fetchItems();
+    // Seleciona automaticamente o último item criado (o mais recente)
+    if (updatedItems.length > 0) {
+      const newestItem = updatedItems[updatedItems.length - 1];
+      setSelectedItem(newestItem);
+    }
+    setCreateItemModalOpen(false);
+  };
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -111,31 +129,43 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <Autocomplete
-          options={items}
-          getOptionLabel={(option) => `${option.nome} (${option.codigo_interno || "sem código"})`}
-          value={selectedItem}
-          onChange={(_, newValue) => setSelectedItem(newValue)}
-          loading={loadingItems}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Item"
-              required
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {loadingItems ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
-            />
-          )}
-          noOptionsText="Nenhum item encontrado"
-          loadingText="Carregando itens..."
-        />
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+          <Autocomplete
+            sx={{ flex: 1 }}
+            options={items}
+            getOptionLabel={(option) => `${option.nome} (${option.codigo_interno || "sem código"})`}
+            value={selectedItem}
+            onChange={(_, newValue) => setSelectedItem(newValue)}
+            loading={loadingItems}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Item"
+                required
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loadingItems ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+            noOptionsText="Nenhum item encontrado"
+            loadingText="Carregando itens..."
+          />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setCreateItemModalOpen(true)}
+            sx={{ minWidth: 'auto', px: 1.5, height: 56 }}
+            title="Criar novo item"
+          >
+            <AddCircleOutlineIcon />
+          </Button>
+        </Box>
 
         <TextField
           fullWidth
@@ -193,6 +223,18 @@ export default function AddStockForm({ warehouseId, warehouseName, onClose, onSa
           {submitting ? "Salvando..." : "Adicionar ao Estoque"}
         </Button>
       </Box>
+
+      {/* Modal para criar novo item */}
+      <Modal
+        title="Criar Novo Item"
+        isOpen={createItemModalOpen}
+        onClose={() => setCreateItemModalOpen(false)}
+      >
+        <ItemForm
+          onClose={() => setCreateItemModalOpen(false)}
+          onSaved={handleItemCreated}
+        />
+      </Modal>
     </Box>
   );
 }
