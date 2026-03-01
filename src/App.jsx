@@ -5,13 +5,6 @@ import {
   Navigate,
 } from 'react-router-dom';
 
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import EstoquePage from './pages/EstoquePage';
-import WarehousePage from './pages/WarehousePage';
-import SupplierPage from './pages/SupplierPage';
-import MovementPage from './pages/MovementPage';
-
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import ItemsPage from "./pages/ItemsPage";
