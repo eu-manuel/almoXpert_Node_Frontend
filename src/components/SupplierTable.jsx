@@ -21,10 +21,14 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BusinessIcon from '@mui/icons-material/Business';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import SupplierItemsModal from './SupplierItemsModal';
 
 const SupplierTable = ({ refreshFlag }) => {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [itemsModalOpen, setItemsModalOpen] = useState(false);
+  const [selectedSupplierForItems, setSelectedSupplierForItems] = useState(null);
 
   const fetchSuppliers = async () => {
     try {
@@ -86,6 +90,7 @@ const SupplierTable = ({ refreshFlag }) => {
   }
 
   return (
+    <>
     <TableContainer
       component={Paper}
       elevation={3}
@@ -132,6 +137,18 @@ const SupplierTable = ({ refreshFlag }) => {
                   <Box
                     sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}
                   >
+                    <Tooltip title="Itens fornecidos">
+                      <IconButton
+                        size="small"
+                        color="secondary"
+                        onClick={() => {
+                          setSelectedSupplierForItems(s);
+                          setItemsModalOpen(true);
+                        }}
+                      >
+                        <InventoryIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                     <Tooltip title="Editar">
                       <IconButton
                         size="small"
@@ -166,6 +183,16 @@ const SupplierTable = ({ refreshFlag }) => {
         </TableBody>
       </Table>
     </TableContainer>
+
+    <SupplierItemsModal
+      open={itemsModalOpen}
+      onClose={() => {
+        setItemsModalOpen(false);
+        setSelectedSupplierForItems(null);
+      }}
+      supplier={selectedSupplierForItems}
+    />
+    </>
   );
 };
 

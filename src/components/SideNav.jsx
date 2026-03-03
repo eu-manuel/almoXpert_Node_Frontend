@@ -12,16 +12,17 @@ import {
   Divider,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import WarehouseIcon from '@mui/icons-material/Warehouse';
-import PeopleIcon from '@mui/icons-material/People';
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import almoXlogo from '/Logo Pequena AlmoXpert.png';
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import CategoryIcon from "@mui/icons-material/Category";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
+import PeopleIcon from "@mui/icons-material/People";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import almoXlogo from "/Logo Pequena AlmoXpert.png";
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -38,12 +39,13 @@ export default function SideNav() {
   };
 
   const menuItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: <HomeIcon /> },
-    { name: 'Estoque', path: '/items', icon: <InventoryIcon /> },
-    { name: 'Almoxarifados', path: '/warehouses', icon: <WarehouseIcon /> },
-    { name: 'Fornecedores', path: '/suppliers', icon: <PeopleIcon /> },
-    { name: 'Movimentações', path: '/movements', icon: <SwapHorizIcon /> },
-    { name: 'Configurações', path: '/settings', icon: <SettingsIcon /> },
+    { name: "Dashboard", path: "/dashboard", icon: <HomeIcon /> },
+    { name: "Cadastro Itens", path: "/items", icon: <CategoryIcon /> },
+    { name: "Estoque", path: "/stock", icon: <InventoryIcon /> },
+    { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon /> },
+    { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon /> },
+    { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon /> },
+    { name: "Configurações", path: "/settings", icon: <SettingsIcon /> },
   ];
 
   const drawerContent = (

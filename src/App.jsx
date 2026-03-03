@@ -5,15 +5,17 @@ import {
   Navigate,
 } from 'react-router-dom';
 
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import EstoquePage from './pages/EstoquePage';
-import WarehousePage from './pages/WarehousePage';
-import SupplierPage from './pages/SupplierPage';
-import MovementPage from './pages/MovementPage';
+import LoginPage from "./pages/LoginPage";
+import DashboardPage from "./pages/DashboardPage";
+import ItemsPage from "./pages/ItemsPage";
+import EstoquePage from "./pages/EstoquePage";
+import WarehousePage from "./pages/WarehousePage";
+import SupplierPage from "./pages/SupplierPage";
+import MovementPage from "./pages/MovementPage";
 
-import { useContext } from 'react';
-import { UserContext } from './context/UserContext';
+
+import { useContext } from "react";
+import { UserContext } from "./context/UserContext";
 
 function App() {
   const { user } = useContext(UserContext); // pega usuário do contexto
@@ -32,6 +34,11 @@ function App() {
 
         <Route
           path="/items"
+          element={user ? <ItemsPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/stock"
           element={user ? <EstoquePage /> : <Navigate to="/login" />}
         />
 

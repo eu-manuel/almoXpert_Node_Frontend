@@ -22,12 +22,16 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ItemSuppliersModal from './ItemSuppliersModal';
 
 export default function ItemTable() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
+  const [supplierModalOpen, setSupplierModalOpen] = useState(false);
+  const [selectedItemForSuppliers, setSelectedItemForSuppliers] = useState(null);
 
   const fetchItems = async () => {
     try {
@@ -160,6 +164,18 @@ export default function ItemTable() {
                         gap: 0.5,
                       }}
                     >
+                      <Tooltip title="Fornecedores">
+                        <IconButton
+                          size="small"
+                          color="secondary"
+                          onClick={() => {
+                            setSelectedItemForSuppliers(item);
+                            setSupplierModalOpen(true);
+                          }}
+                        >
+                          <LocalShippingIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title="Editar">
                         <IconButton
                           size="small"
@@ -206,6 +222,15 @@ export default function ItemTable() {
           onSaved={fetchItems}
         />
       </Modal>
+
+      <ItemSuppliersModal
+        open={supplierModalOpen}
+        onClose={() => {
+          setSupplierModalOpen(false);
+          setSelectedItemForSuppliers(null);
+        }}
+        item={selectedItemForSuppliers}
+      />
     </Box>
   );
 }
