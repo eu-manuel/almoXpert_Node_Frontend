@@ -141,6 +141,7 @@ export default function EstoquePage() {
             items={stockItems}
             loading={loadingItems}
             warehouseName={selectedWarehouse?.nome}
+            onRefresh={fetchStockItems}
           />
 
           {/* FAB para adicionar item ao estoque */}
