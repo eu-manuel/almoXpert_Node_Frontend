@@ -24,7 +24,6 @@ import {
   Chip,
   Divider,
   Alert,
-  Tooltip,
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TableChartIcon from '@mui/icons-material/TableChart';
@@ -50,7 +49,7 @@ function formatCell(value, colKey) {
   }
 
   // Campos de percentual
-  if (colKey.includes('percentual') || colKey.includes('pct') || colKey === 'perc_acumulado' || colKey === 'perc_individual') {
+  if (colKey.includes('percent') || colKey.includes('pct') || colKey === 'perc_acumulado' || colKey === 'perc_individual') {
     const num = Number(value);
     if (isNaN(num)) return value;
     return `${num.toFixed(1)}%`;
@@ -128,34 +127,26 @@ export default function ReportPreview({ data, reportType, filters, onExport, exp
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Tooltip title="Exportação PDF será habilitada em breve">
-            <span>
-              <Button
-                variant="outlined"
-                color="error"
-                startIcon={<PictureAsPdfIcon />}
-                onClick={() => onExport('pdf')}
-                disabled={exporting}
-                size="small"
-              >
-                PDF
-              </Button>
-            </span>
-          </Tooltip>
-          <Tooltip title="Exportação Excel será habilitada em breve">
-            <span>
-              <Button
-                variant="outlined"
-                color="success"
-                startIcon={<TableChartIcon />}
-                onClick={() => onExport('excel')}
-                disabled={exporting}
-                size="small"
-              >
-                Excel
-              </Button>
-            </span>
-          </Tooltip>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={() => onExport('pdf')}
+            disabled={exporting}
+            size="small"
+          >
+            PDF
+          </Button>
+          <Button
+            variant="outlined"
+            color="success"
+            startIcon={<TableChartIcon />}
+            onClick={() => onExport('excel')}
+            disabled={exporting}
+            size="small"
+          >
+            Excel
+          </Button>
         </Box>
       </Box>
 
@@ -176,7 +167,7 @@ export default function ReportPreview({ data, reportType, filters, onExport, exp
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {col.label}
+                  {col.label || col.header}
                 </TableCell>
               ))}
             </TableRow>
