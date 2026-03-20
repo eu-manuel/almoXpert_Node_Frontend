@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
+  Autocomplete,
   Box,
   Grid,
   TextField,
@@ -238,9 +239,58 @@ export default function ReportFilters({ reportType, filters, onChange, onGenerat
           }
 
           if (f.type === 'select') {
-            // Opções fixas (options) ou carregadas dinamicamente (source)
-            const opts = f.options || optionsCache[f.source] || [];
-            const isLoading = f.source && loadingSources[f.source];
+            // ── Filtros com source (API) → Autocomplete com busca ──
+            if (f.source) {
+              const opts = optionsCache[f.source] || [];
+              const isLoading = loadingSources[f.source];
+              const selectedOption = opts.find((o) => String(o.value) === String(value)) || null;
+
+              return (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={f.name}>
+                  <Autocomplete
+                    options={opts}
+                    getOptionLabel={(opt) => opt.label || ''}
+                    value={selectedOption}
+                    onChange={(_, newValue) => handleChange(f.name, newValue ? String(newValue.value) : '')}
+                    filterOptions={(options, state) => {
+                      const input = state.inputValue.toLowerCase();
+                      const filtered = input
+                        ? options.filter((o) => o.label.toLowerCase().includes(input))
+                        : options;
+                      return filtered.slice(0, 5);
+                    }}
+                    loading={isLoading}
+                    size="small"
+                    fullWidth
+                    clearOnEscape
+                    clearText="Limpar"
+                    noOptionsText="Nenhum resultado"
+                    loadingText="Carregando..."
+                    isOptionEqualToValue={(opt, val) => String(opt.value) === String(val.value)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={f.label}
+                        slotProps={{
+                          input: {
+                            ...params.InputProps,
+                            endAdornment: (
+                              <>
+                                {isLoading ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
+                                {params.InputProps.endAdornment}
+                              </>
+                            ),
+                          },
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+              );
+            }
+
+            // ── Filtros com options fixas → TextField select (sem mudança) ──
+            const opts = f.options || [];
 
             return (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={f.name}>
@@ -251,12 +301,6 @@ export default function ReportFilters({ reportType, filters, onChange, onGenerat
                   onChange={(e) => handleChange(f.name, e.target.value)}
                   fullWidth
                   size="small"
-                  disabled={isLoading}
-                  slotProps={{
-                    input: {
-                      endAdornment: isLoading ? <CircularProgress size={18} sx={{ mr: 2 }} /> : null,
-                    },
-                  }}
                 >
                   <MenuItem value="">
                     <em>Todos</em>
