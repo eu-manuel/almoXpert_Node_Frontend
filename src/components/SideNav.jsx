@@ -21,6 +21,7 @@ import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PeopleIcon from "@mui/icons-material/People";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import almoXlogo from "/Logo Pequena AlmoXpert.png";
@@ -46,6 +47,7 @@ export default function SideNav() {
     { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon /> },
     { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon /> },
     { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon /> },
+    { name: "Processos", path: "/processos", icon: <AssignmentIcon /> },
     { name: "Relatórios", path: "/reports", icon: <AssessmentIcon /> },
     { name: "Configurações", path: "/settings", icon: <SettingsIcon /> },
   ];
