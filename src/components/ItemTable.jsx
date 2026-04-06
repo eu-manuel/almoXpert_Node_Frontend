@@ -124,6 +124,7 @@ export default function ItemTable() {
               <TableCell>Unidade</TableCell>
               <TableCell align="center">Est. Mínimo</TableCell>
               <TableCell align="center">Est. Máximo</TableCell>
+              <TableCell align="center">Categoria</TableCell>
               <TableCell align="center">Status</TableCell>
               <TableCell align="center">Ações</TableCell>
             </TableRow>
@@ -146,6 +147,18 @@ export default function ItemTable() {
                   </TableCell>
                   <TableCell align="center">
                     {item.estoque_maximo ?? '-'}
+                  </TableCell>
+                  <TableCell align="center">
+                    {item.Categories && item.Categories.length > 0 ? (
+                      <Chip
+                        label={item.Categories[0].nome}
+                        color="info"
+                        size="small"
+                        variant="outlined"
+                      />
+                    ) : (
+                      '-'
+                    )}
                   </TableCell>
                   <TableCell align="center">
                     {item.status && (
@@ -200,7 +213,7 @@ export default function ItemTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                   <Typography color="text.secondary">
                     Nenhum item encontrado
                   </Typography>

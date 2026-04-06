@@ -1,9 +1,20 @@
 // components/ItemForm.js
 import React, { useState, useEffect } from 'react';
 import { createItem, updateItem } from '../services/itemServices';
-import { Box, TextField, Button, Grid, MenuItem, Alert } from '@mui/material';
+import ItemCategoriesModal from './ItemCategoriesModal';
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Alert,
+  Typography,
+  Chip,
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CategoryIcon from '@mui/icons-material/Category';
 
 export default function ItemForm({ onClose, onSaved, itemToEdit }) {
   const [form, setForm] = useState({
@@ -18,9 +29,19 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Estados para o modal de categorias
+  const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
+  const [itemCategories, setItemCategories] = useState([]);
+
   // Se for edição, preencher com os dados existentes
   useEffect(() => {
-    if (itemToEdit) setForm(itemToEdit);
+    if (itemToEdit) {
+      setForm(itemToEdit);
+      // Se o item tiver categorias, armazenar localmente
+      if (itemToEdit.Categories && itemToEdit.Categories.length > 0) {
+        setItemCategories(itemToEdit.Categories);
+      }
+    }
   }, [itemToEdit]);
 
   const handleChange = (e) => {
@@ -32,16 +53,26 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
     }));
   };
 
+  const handleCategoriesUpdated = (updatedItem) => {
+    // Atualizar categorias locais quando modal faz mudanças
+    if (updatedItem && updatedItem.Categories) {
+      setItemCategories(updatedItem.Categories);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
+      // Prepara os dados do item (SEM categorias)
+      const itemData = { ...form };
+
       if (itemToEdit) {
-        await updateItem(itemToEdit.id_item, form);
+        await updateItem(itemToEdit.id_item, itemData);
       } else {
-        await createItem(form);
+        await createItem(itemData);
       }
       onSaved?.();
       onClose();
@@ -148,7 +179,47 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
           />
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+              Categorias
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1, minHeight: 32 }}>
+              {itemCategories.length > 0 ? (
+                itemCategories.map((cat) => (
+                  <Chip
+                    key={cat.id_categoria}
+                    label={cat.nome}
+                    size="small"
+                    color="info"
+                    variant="outlined"
+                  />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Nenhuma categoria vinculada
+                </Typography>
+              )}
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<CategoryIcon />}
+              onClick={() => setCategoriesModalOpen(true)}
+              disabled={!itemToEdit}
+              fullWidth
+            >
+              Gerenciar Categorias
+            </Button>
+            {!itemToEdit && (
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                Salve o item primeiro para gerenciar categorias
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             select
@@ -198,6 +269,16 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
           {loading ? 'Salvando...' : itemToEdit ? 'Atualizar' : 'Salvar'}
         </Button>
       </Box>
+
+      {/* Modal de gerenciamento de categorias */}
+      {itemToEdit && (
+        <ItemCategoriesModal
+          open={categoriesModalOpen}
+          onClose={() => setCategoriesModalOpen(false)}
+          item={itemToEdit}
+          onCategoriesChanged={handleCategoriesUpdated}
+        />
+      )}
     </Box>
   );
 }
