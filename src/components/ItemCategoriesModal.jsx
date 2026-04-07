@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-  getItemCategories,
-  addCategoryToItem,
-  removeCategoryFromItem,
-} from '../services/itemCategoryServices';
-import { searchCategories, findOrCreateCategory } from '../services/categoryServices';
+import { searchCategories } from '../services/categoryServices';
 import {
   Dialog,
   DialogTitle,
@@ -14,7 +9,6 @@ import {
   IconButton,
   Typography,
   Chip,
-  Alert,
   CircularProgress,
   Autocomplete,
   TextField,
@@ -24,29 +18,27 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import CategoryIcon from '@mui/icons-material/Category';
 
-export default function ItemCategoriesModal({ open, onClose, item, onCategoriesChanged }) {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
+export default function ItemCategoriesModal({
+  open,
+  onClose,
+  currentCategories,   // array de categorias atual vindo do ItemForm
+  onAddCategory,       // (category) => void — informa o pai sobre intenção de adicionar
+  onRemoveCategory,    // (categoriaId) => void — informa o pai sobre intenção de remover
+}) {
   // Estados para o autocomplete
   const [searchResults, setSearchResults] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
-  const [addingCategory, setAddingCategory] = useState(false);
 
-  // Buscar categorias do item ao abrir modal
+  // Limpar campo ao abrir o modal
   useEffect(() => {
-    if (open && item) {
-      fetchCategories();
-      setError('');
-      setSuccess('');
+    if (open) {
       setSelectedCategory(null);
       setInputValue('');
+      setSearchResults([]);
     }
-  }, [open, item]);
+  }, [open]);
 
   // Buscar categorias com debounce
   useEffect(() => {
@@ -59,9 +51,9 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
       setSearchLoading(true);
       try {
         const results = await searchCategories(inputValue);
-        // Filtrar categorias que já estão vinculadas
+        // Filtrar categorias que já estão na lista local
         const filtered = results.filter(
-          (r) => !categories.some((c) => c.id_categoria === r.id_categoria)
+          (r) => !currentCategories.some((c) => c.id_categoria === r.id_categoria)
         );
         setSearchResults(filtered);
       } catch (err) {
@@ -74,97 +66,19 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
 
     const debounceTimer = setTimeout(fetchSearchResults, 300);
     return () => clearTimeout(debounceTimer);
-  }, [inputValue, categories]);
+  }, [inputValue, currentCategories]);
 
-  const fetchCategories = async () => {
-    if (!item) return;
-    try {
-      setLoading(true);
-      const data = await getItemCategories(item.id_item);
-      setCategories(data);
-    } catch (err) {
-      console.error('Erro ao buscar categorias:', err);
-      setError('Erro ao carregar categorias do item.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddCategory = async () => {
+  const handleAdd = () => {
     if (!selectedCategory) return;
-
-    setAddingCategory(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      let categoriaId;
-
-      // Se for categoria nova (criar on-the-fly)
-      if (selectedCategory.isNew) {
-        const { category } = await findOrCreateCategory(selectedCategory.inputValue);
-        categoriaId = category.id_categoria;
-      } else {
-        categoriaId = selectedCategory.id_categoria;
-      }
-
-      // Adicionar categoria ao item
-      const result = await addCategoryToItem(item.id_item, categoriaId);
-      
-      // Atualizar lista de categorias
-      setCategories(result.item.Categories || []);
-      
-      // Resetar campos
-      setSelectedCategory(null);
-      setInputValue('');
-      
-      // Feedback de sucesso
-      setSuccess('Categoria adicionada com sucesso!');
-      
-      // Notificar componente pai
-      if (onCategoriesChanged) {
-        onCategoriesChanged(result.item);
-      }
-      
-      // Limpar mensagem após 3 segundos
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (err) {
-      console.error('Erro ao adicionar categoria:', err);
-      setError(err.message || 'Erro ao adicionar categoria.');
-    } finally {
-      setAddingCategory(false);
-    }
+    onAddCategory(selectedCategory);
+    setSelectedCategory(null);
+    setInputValue('');
   };
 
-  const handleRemoveCategory = async (categoriaId) => {
+  const handleRemove = (categoriaId) => {
     if (!window.confirm('Deseja remover esta categoria do item?')) return;
-
-    setError('');
-    setSuccess('');
-
-    try {
-      const result = await removeCategoryFromItem(item.id_item, categoriaId);
-      
-      // Atualizar lista de categorias
-      setCategories(result.item.Categories || []);
-      
-      // Feedback de sucesso
-      setSuccess('Categoria removida com sucesso!');
-      
-      // Notificar componente pai
-      if (onCategoriesChanged) {
-        onCategoriesChanged(result.item);
-      }
-      
-      // Limpar mensagem após 3 segundos
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (err) {
-      console.error('Erro ao remover categoria:', err);
-      setError(err.message || 'Erro ao remover categoria.');
-    }
+    onRemoveCategory(categoriaId);
   };
-
-  if (!item) return null;
 
   return (
     <Dialog
@@ -196,7 +110,7 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
               Categorias do Item
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {item.nome}
+              As alterações serão salvas ao clicar em "Atualizar"
             </Typography>
           </Box>
         </Box>
@@ -213,37 +127,21 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
       </DialogTitle>
 
       <DialogContent sx={{ pt: 3 }}>
-        {/* Mensagens de erro/sucesso */}
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
-            {error}
-          </Alert>
-        )}
-        {success && (
-          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>
-            {success}
-          </Alert>
-        )}
-
         {/* Seção: Categorias atuais */}
         <Box sx={{ mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-            Categorias vinculadas ({categories.length})
+            Categorias vinculadas ({currentCategories.length})
           </Typography>
-          
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-              <CircularProgress size={24} />
-            </Box>
-          ) : categories.length > 0 ? (
+
+          {currentCategories.length > 0 ? (
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-              {categories.map((category) => (
+              {currentCategories.map((category) => (
                 <Chip
                   key={category.id_categoria}
-                  label={category.nome}
-                  color="info"
+                  label={category.isNew ? `${category.nome} (novo)` : category.nome}
+                  color={category.isNew ? 'warning' : 'info'}
                   variant="outlined"
-                  onDelete={() => handleRemoveCategory(category.id_categoria)}
+                  onDelete={() => handleRemove(category.id_categoria)}
                   sx={{
                     fontSize: '0.875rem',
                     fontWeight: 500,
@@ -265,7 +163,7 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
           <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
             Adicionar categoria
           </Typography>
-          
+
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
             <Autocomplete
               fullWidth
@@ -279,9 +177,7 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
               }}
               options={searchResults}
               getOptionLabel={(option) => {
-                if (option.isNew) {
-                  return option.inputValue;
-                }
+                if (option.isNew) return option.inputValue;
                 return option.nome || '';
               }}
               isOptionEqualToValue={(option, value) => {
@@ -292,10 +188,7 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
               }}
               filterOptions={(options, params) => {
                 const { inputValue } = params;
-                
-                // Sempre adicionar opção de criar nova ao final
                 const filtered = [...options];
-                
                 if (inputValue.trim() !== '') {
                   filtered.push({
                     isNew: true,
@@ -303,7 +196,6 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
                     nome: `Criar categoria "${inputValue.trim()}"`,
                   });
                 }
-                
                 return filtered;
               }}
               loading={searchLoading}
@@ -351,15 +243,15 @@ export default function ItemCategoriesModal({ open, onClose, item, onCategoriesC
                 />
               )}
             />
-            
+
             <Button
               variant="contained"
-              onClick={handleAddCategory}
-              disabled={!selectedCategory || addingCategory}
-              startIcon={addingCategory ? <CircularProgress size={16} /> : <AddIcon />}
+              onClick={handleAdd}
+              disabled={!selectedCategory}
+              startIcon={<AddIcon />}
               sx={{ minWidth: 120 }}
             >
-              {addingCategory ? 'Adicionando...' : 'Adicionar'}
+              Adicionar
             </Button>
           </Box>
         </Box>

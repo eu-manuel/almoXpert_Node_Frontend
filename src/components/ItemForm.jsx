@@ -1,6 +1,8 @@
 // components/ItemForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createItem, updateItem } from '../services/itemServices';
+import { addCategoryToItem, removeCategoryFromItem } from '../services/itemCategoryServices';
+import { findOrCreateCategory } from '../services/categoryServices';
 import ItemCategoriesModal from './ItemCategoriesModal';
 import {
   Box,
@@ -31,32 +33,84 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
 
   // Estados para o modal de categorias
   const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
+
+  // Lista de categorias exibida no form (estado local, não salvo ainda)
   const [itemCategories, setItemCategories] = useState([]);
+
+  // Intenções pendentes: categorias a adicionar e a remover ao salvar
+  // toAdd: array de { inputValue: string } (novas) ou { id_categoria, nome } (existentes)
+  // toRemove: array de id_categoria
+  const [pendingAdd, setPendingAdd] = useState([]);
+  const [pendingRemove, setPendingRemove] = useState([]);
+
+  const categoriesInitialized = useRef(false);
 
   // Se for edição, preencher com os dados existentes
   useEffect(() => {
     if (itemToEdit) {
       setForm(itemToEdit);
-      // Se o item tiver categorias, armazenar localmente
-      if (itemToEdit.Categories && itemToEdit.Categories.length > 0) {
-        setItemCategories(itemToEdit.Categories);
+      if (!categoriesInitialized.current) {
+        setItemCategories(itemToEdit.Categories || []);
+        categoriesInitialized.current = true;
       }
     }
   }, [itemToEdit]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === 'number' && value !== '' ? Number(value) : value,
     }));
   };
 
-  const handleCategoriesUpdated = (updatedItem) => {
-    // Atualizar categorias locais quando modal faz mudanças
-    if (updatedItem && updatedItem.Categories) {
-      setItemCategories(updatedItem.Categories);
+  // Chamado pelo modal quando o usuário quer adicionar uma categoria
+  // category pode ser: { id_categoria, nome } (existente) ou { isNew: true, inputValue } (nova)
+  const handleAddCategory = (category) => {
+    // Se for nova categoria (ainda sem id), adiciona direto à lista visual com id temporário
+    if (category.isNew) {
+      const tempId = `temp_${Date.now()}`;
+      const newCat = { id_categoria: tempId, nome: category.inputValue, isNew: true };
+
+      setItemCategories((prev) => [...prev, newCat]);
+      setPendingAdd((prev) => [...prev, { tempId, inputValue: category.inputValue }]);
+    } else {
+      // Categoria existente — verificar se estava na fila de remoção
+      setPendingRemove((prev) => prev.filter((id) => id !== category.id_categoria));
+
+      // Só adiciona visualmente se ainda não estiver na lista
+      setItemCategories((prev) => {
+        if (prev.some((c) => c.id_categoria === category.id_categoria)) return prev;
+        return [...prev, category];
+      });
+
+      // Adicionar à fila apenas se não estava na lista original
+      const wasOriginal = (itemToEdit?.Categories || []).some(
+        (c) => c.id_categoria === category.id_categoria
+      );
+      if (!wasOriginal) {
+        setPendingAdd((prev) => [...prev, { id_categoria: category.id_categoria, nome: category.nome }]);
+      }
+    }
+  };
+
+  // Chamado pelo modal quando o usuário quer remover uma categoria
+  const handleRemoveCategory = (categoriaId) => {
+    // Remover da lista visual
+    setItemCategories((prev) => prev.filter((c) => c.id_categoria !== categoriaId));
+
+    // Se era uma adição pendente (temp ou existente), cancelar a adição
+    const isInPendingAdd = pendingAdd.some(
+      (p) => p.tempId === categoriaId || p.id_categoria === categoriaId
+    );
+
+    if (isInPendingAdd) {
+      setPendingAdd((prev) =>
+        prev.filter((p) => p.tempId !== categoriaId && p.id_categoria !== categoriaId)
+      );
+    } else {
+      // Era uma categoria já salva — marcar para remoção
+      setPendingRemove((prev) => [...prev, categoriaId]);
     }
   };
 
@@ -66,14 +120,36 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
     setError('');
 
     try {
-      // Prepara os dados do item (SEM categorias)
       const itemData = { ...form };
+      let savedItemId = itemToEdit?.id_item;
 
       if (itemToEdit) {
         await updateItem(itemToEdit.id_item, itemData);
       } else {
-        await createItem(itemData);
+        const created = await createItem(itemData);
+        savedItemId = created.id_item;
       }
+
+      // Processar remoções pendentes
+      for (const categoriaId of pendingRemove) {
+        await removeCategoryFromItem(savedItemId, categoriaId);
+      }
+
+      // Processar adições pendentes
+      for (const cat of pendingAdd) {
+        let categoriaId;
+
+        if (cat.inputValue) {
+          // Categoria nova — buscar ou criar
+          const { category } = await findOrCreateCategory(cat.inputValue);
+          categoriaId = category.id_categoria;
+        } else {
+          categoriaId = cat.id_categoria;
+        }
+
+        await addCategoryToItem(savedItemId, categoriaId);
+      }
+
       onSaved?.();
       onClose();
     } catch (err) {
@@ -191,7 +267,7 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
                     key={cat.id_categoria}
                     label={cat.nome}
                     size="small"
-                    color="info"
+                    color={cat.isNew ? 'warning' : 'info'}
                     variant="outlined"
                   />
                 ))
@@ -275,8 +351,9 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
         <ItemCategoriesModal
           open={categoriesModalOpen}
           onClose={() => setCategoriesModalOpen(false)}
-          item={itemToEdit}
-          onCategoriesChanged={handleCategoriesUpdated}
+          currentCategories={itemCategories}
+          onAddCategory={handleAddCategory}
+          onRemoveCategory={handleRemoveCategory}
         />
       )}
     </Box>
