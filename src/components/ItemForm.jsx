@@ -1,9 +1,22 @@
 // components/ItemForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createItem, updateItem } from '../services/itemServices';
-import { Box, TextField, Button, Grid, MenuItem, Alert } from '@mui/material';
+import { addCategoryToItem, removeCategoryFromItem } from '../services/itemCategoryServices';
+import { findOrCreateCategory } from '../services/categoryServices';
+import ItemCategoriesModal from './ItemCategoriesModal';
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  MenuItem,
+  Alert,
+  Typography,
+  Chip,
+} from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CategoryIcon from '@mui/icons-material/Category';
 
 export default function ItemForm({ onClose, onSaved, itemToEdit }) {
   const [form, setForm] = useState({
@@ -18,18 +31,87 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Estados para o modal de categorias
+  const [categoriesModalOpen, setCategoriesModalOpen] = useState(false);
+
+  // Lista de categorias exibida no form (estado local, não salvo ainda)
+  const [itemCategories, setItemCategories] = useState([]);
+
+  // Intenções pendentes: categorias a adicionar e a remover ao salvar
+  // toAdd: array de { inputValue: string } (novas) ou { id_categoria, nome } (existentes)
+  // toRemove: array de id_categoria
+  const [pendingAdd, setPendingAdd] = useState([]);
+  const [pendingRemove, setPendingRemove] = useState([]);
+
+  const categoriesInitialized = useRef(false);
+
   // Se for edição, preencher com os dados existentes
   useEffect(() => {
-    if (itemToEdit) setForm(itemToEdit);
+    if (itemToEdit) {
+      setForm(itemToEdit);
+      if (!categoriesInitialized.current) {
+        setItemCategories(itemToEdit.Categories || []);
+        categoriesInitialized.current = true;
+      }
+    }
   }, [itemToEdit]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === 'number' && value !== '' ? Number(value) : value,
     }));
+  };
+
+  // Chamado pelo modal quando o usuário quer adicionar uma categoria
+  // category pode ser: { id_categoria, nome } (existente) ou { isNew: true, inputValue } (nova)
+  const handleAddCategory = (category) => {
+    // Se for nova categoria (ainda sem id), adiciona direto à lista visual com id temporário
+    if (category.isNew) {
+      const tempId = `temp_${Date.now()}`;
+      const newCat = { id_categoria: tempId, nome: category.inputValue, isNew: true };
+
+      setItemCategories((prev) => [...prev, newCat]);
+      setPendingAdd((prev) => [...prev, { tempId, inputValue: category.inputValue }]);
+    } else {
+      // Categoria existente — verificar se estava na fila de remoção
+      setPendingRemove((prev) => prev.filter((id) => id !== category.id_categoria));
+
+      // Só adiciona visualmente se ainda não estiver na lista
+      setItemCategories((prev) => {
+        if (prev.some((c) => c.id_categoria === category.id_categoria)) return prev;
+        return [...prev, category];
+      });
+
+      // Adicionar à fila apenas se não estava na lista original
+      const wasOriginal = (itemToEdit?.Categories || []).some(
+        (c) => c.id_categoria === category.id_categoria
+      );
+      if (!wasOriginal) {
+        setPendingAdd((prev) => [...prev, { id_categoria: category.id_categoria, nome: category.nome }]);
+      }
+    }
+  };
+
+  // Chamado pelo modal quando o usuário quer remover uma categoria
+  const handleRemoveCategory = (categoriaId) => {
+    // Remover da lista visual
+    setItemCategories((prev) => prev.filter((c) => c.id_categoria !== categoriaId));
+
+    // Se era uma adição pendente (temp ou existente), cancelar a adição
+    const isInPendingAdd = pendingAdd.some(
+      (p) => p.tempId === categoriaId || p.id_categoria === categoriaId
+    );
+
+    if (isInPendingAdd) {
+      setPendingAdd((prev) =>
+        prev.filter((p) => p.tempId !== categoriaId && p.id_categoria !== categoriaId)
+      );
+    } else {
+      // Era uma categoria já salva — marcar para remoção
+      setPendingRemove((prev) => [...prev, categoriaId]);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -38,11 +120,36 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
     setError('');
 
     try {
+      const itemData = { ...form };
+      let savedItemId = itemToEdit?.id_item;
+
       if (itemToEdit) {
-        await updateItem(itemToEdit.id_item, form);
+        await updateItem(itemToEdit.id_item, itemData);
       } else {
-        await createItem(form);
+        const created = await createItem(itemData);
+        savedItemId = created.id_item;
       }
+
+      // Processar remoções pendentes
+      for (const categoriaId of pendingRemove) {
+        await removeCategoryFromItem(savedItemId, categoriaId);
+      }
+
+      // Processar adições pendentes
+      for (const cat of pendingAdd) {
+        let categoriaId;
+
+        if (cat.inputValue) {
+          // Categoria nova — buscar ou criar
+          const { category } = await findOrCreateCategory(cat.inputValue);
+          categoriaId = category.id_categoria;
+        } else {
+          categoriaId = cat.id_categoria;
+        }
+
+        await addCategoryToItem(savedItemId, categoriaId);
+      }
+
       onSaved?.();
       onClose();
     } catch (err) {
@@ -148,7 +255,47 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
           />
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+              Categorias
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1, minHeight: 32 }}>
+              {itemCategories.length > 0 ? (
+                itemCategories.map((cat) => (
+                  <Chip
+                    key={cat.id_categoria}
+                    label={cat.nome}
+                    size="small"
+                    color={cat.isNew ? 'warning' : 'info'}
+                    variant="outlined"
+                  />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  Nenhuma categoria vinculada
+                </Typography>
+              )}
+            </Box>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<CategoryIcon />}
+              onClick={() => setCategoriesModalOpen(true)}
+              disabled={!itemToEdit}
+              fullWidth
+            >
+              Gerenciar Categorias
+            </Button>
+            {!itemToEdit && (
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                Salve o item primeiro para gerenciar categorias
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
             select
@@ -198,6 +345,17 @@ export default function ItemForm({ onClose, onSaved, itemToEdit }) {
           {loading ? 'Salvando...' : itemToEdit ? 'Atualizar' : 'Salvar'}
         </Button>
       </Box>
+
+      {/* Modal de gerenciamento de categorias */}
+      {itemToEdit && (
+        <ItemCategoriesModal
+          open={categoriesModalOpen}
+          onClose={() => setCategoriesModalOpen(false)}
+          currentCategories={itemCategories}
+          onAddCategory={handleAddCategory}
+          onRemoveCategory={handleRemoveCategory}
+        />
+      )}
     </Box>
   );
 }
