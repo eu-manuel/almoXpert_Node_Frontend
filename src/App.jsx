@@ -14,6 +14,7 @@ import SupplierPage from "./pages/SupplierPage";
 import MovementPage from "./pages/MovementPage";
 import ReportsPage from "./pages/ReportsPage";
 import ProcessoPage from "./pages/ProcessoPage";
+import UsersPage from "./pages/UsersPage";
 
 
 import { useContext } from "react";
@@ -67,6 +68,11 @@ function App() {
         <Route
           path="/processos"
           element={user ? <ProcessoPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/users"
+          element={user ? <UsersPage /> : <Navigate to="/login" />}
         />
 
         {/* Redireciona qualquer rota inválida para o login */}
