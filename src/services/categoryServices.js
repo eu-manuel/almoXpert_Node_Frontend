@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Buscar todas as categorias (com filtro opcional)
 export async function getCategories(query = '') {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const url = query
     ? `${API_URL}/category?q=${encodeURIComponent(query)}`
     : `${API_URL}/category`;
@@ -23,7 +23,7 @@ export async function searchCategories(query) {
 
 // Buscar ou criar categoria por nome
 export async function findOrCreateCategory(nome) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/category/find-or-create`, {
     method: 'POST',
     headers: {
@@ -40,7 +40,7 @@ export async function findOrCreateCategory(nome) {
 
 // Buscar categoria por ID
 export async function getCategoryById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/category/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -52,7 +52,7 @@ export async function getCategoryById(id) {
 
 // Criar categoria
 export async function createCategory(category) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/category`, {
     method: 'POST',
     headers: {

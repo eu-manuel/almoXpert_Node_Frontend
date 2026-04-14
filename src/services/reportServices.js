@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:3000/api';
  * @returns {Promise<Array<{tipo: string, titulo: string}>>}
  */
 export async function listReports() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/reports`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -22,7 +22,7 @@ export async function listReports() {
  * @returns {Promise<{titulo: string, filtros: Object, dados: Array, resumo: Object}>}
  */
 export async function getReportData(tipo, filters = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const params = new URLSearchParams({ formato: 'json', ...filters });
 
   const res = await fetch(`${API_URL}/reports/${tipo}?${params}`, {
@@ -41,7 +41,7 @@ export async function getReportData(tipo, filters = {}) {
  * @param {Object} filters - Filtros aplicados
  */
 export async function exportReport(tipo, formato, filters = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const params = new URLSearchParams({ formato, ...filters });
 
   const res = await fetch(`${API_URL}/reports/${tipo}?${params}`, {

@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Buscar almoxarifados do usuário logado (responsável)
 export async function getMyWarehouses() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse/my`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -14,7 +14,7 @@ export async function getMyWarehouses() {
 
 // Buscar todos os almoxarifados
 export async function getWarehouses() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -26,7 +26,7 @@ export async function getWarehouses() {
 
 // Buscar almoxarifado por ID
 export async function getWarehouseById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -38,7 +38,7 @@ export async function getWarehouseById(id) {
 
 // Criar almoxarifado
 export async function createWarehouse(warehouse) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse`, {
     method: 'POST',
     headers: {
@@ -55,7 +55,7 @@ export async function createWarehouse(warehouse) {
 
 // Atualizar almoxarifado
 export async function updateWarehouse(id, warehouse) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse/${id}`, {
     method: 'PUT',
     headers: {
@@ -72,7 +72,7 @@ export async function updateWarehouse(id, warehouse) {
 
 // Excluir almoxarifado
 export async function deleteWarehouse(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
@@ -85,7 +85,7 @@ export async function deleteWarehouse(id) {
 
 // Buscar estatísticas do almoxarifado (vínculos)
 export async function getWarehouseStats(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/warehouse/${id}/stats`, {
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -14,7 +14,7 @@ export async function login(email, senha) {
   }
 
   // salvar token localmente
-  localStorage.setItem('token', data.token);
+  sessionStorage.setItem('token', data.token);
 
   return data;
 }

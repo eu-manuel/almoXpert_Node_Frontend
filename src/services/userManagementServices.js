@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Listar todos os usuários (com permissões incluídas)
 export async function getUsers() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -18,7 +18,7 @@ export async function getUsers() {
 
 // Buscar usuário por ID (com permissões incluídas)
 export async function getUserById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -30,7 +30,7 @@ export async function getUserById(id) {
 
 // Criar novo usuário
 export async function createUser(userData) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users`, {
     method: 'POST',
     headers: {
@@ -47,7 +47,7 @@ export async function createUser(userData) {
 
 // Atualizar usuário existente
 export async function updateUser(id, userData) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: 'PUT',
     headers: {
@@ -64,7 +64,7 @@ export async function updateUser(id, userData) {
 
 // Excluir usuário
 export async function deleteUser(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
@@ -81,7 +81,7 @@ export async function deleteUser(id) {
 
 // Listar todas as permissões do sistema
 export async function getPermissions() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/permissions`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -97,7 +97,7 @@ export async function getPermissions() {
 
 // Buscar permissões de um usuário específico
 export async function getUserPermissions(userId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/user-permissions/user/${userId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -110,7 +110,7 @@ export async function getUserPermissions(userId) {
 
 // Conceder permissão a um usuário
 export async function grantPermission(userId, permissionId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/user-permissions`, {
     method: 'POST',
     headers: {
@@ -131,7 +131,7 @@ export async function grantPermission(userId, permissionId) {
 
 // Revogar permissão de um usuário
 export async function revokePermission(userId, permissionId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/user-permissions`, {
     method: 'DELETE',
     headers: {

@@ -3,7 +3,7 @@ const API_URL = 'http://localhost:3000/api'; // ajuste se necessário
 // Listar vínculos item ↔ fornecedor (com filtro opcional)
 // filters: { itemId: number, supplierId: number }
 export async function getItemSuppliers(filters = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const params = new URLSearchParams();
 
   if (filters.itemId) params.append('itemId', filters.itemId);
@@ -22,7 +22,7 @@ export async function getItemSuppliers(filters = {}) {
 
 // Criar vínculo item ↔ fornecedor
 export async function createItemSupplier({ itemId, supplierId, preco, prazo_entrega }) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-suppliers`, {
     method: 'POST',
     headers: {
@@ -39,7 +39,7 @@ export async function createItemSupplier({ itemId, supplierId, preco, prazo_entr
 
 // Atualizar vínculo (preço, prazo)
 export async function updateItemSupplier(id, { preco, prazo_entrega }) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-suppliers/${id}`, {
     method: 'PUT',
     headers: {
@@ -56,7 +56,7 @@ export async function updateItemSupplier(id, { preco, prazo_entrega }) {
 
 // Remover vínculo item ↔ fornecedor
 export async function deleteItemSupplier(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-suppliers/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },

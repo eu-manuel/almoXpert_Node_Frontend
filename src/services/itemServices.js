@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Buscar todos os itens
 export async function getItems() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -14,7 +14,7 @@ export async function getItems() {
 
 // Criar item
 export async function createItem(item) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items`, {
     method: 'POST',
     headers: {
@@ -31,7 +31,7 @@ export async function createItem(item) {
 
 // Atualizar item
 export async function updateItem(id, item) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${id}`, {
     method: 'PUT',
     headers: {
@@ -48,7 +48,7 @@ export async function updateItem(id, item) {
 
 // Excluir item
 export async function deleteItem(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
@@ -61,7 +61,7 @@ export async function deleteItem(id) {
 
 // Buscar item por ID
 export async function getItemById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

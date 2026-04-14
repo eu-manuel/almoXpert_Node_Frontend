@@ -71,8 +71,8 @@ export default function SideNav() {
   }, [user]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     window.location.reload();
   };
 

@@ -92,7 +92,7 @@ const REPORT_FILTERS = {
 const API_URL = 'http://localhost:3000/api';
 
 async function fetchOptions(source) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
 
   switch (source) {

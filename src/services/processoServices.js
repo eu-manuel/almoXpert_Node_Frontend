@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Listar todos os processos (filtros opcionais: status, id_almoxarifado)
 export async function getProcessos(filters = {}) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const params = new URLSearchParams();
   if (filters.status) params.append('status', filters.status);
   if (filters.id_almoxarifado)
@@ -24,7 +24,7 @@ export async function getProcessos(filters = {}) {
 
 // Buscar processo por ID (com itens, almoxarifado e usuário)
 export async function getProcessoById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -36,7 +36,7 @@ export async function getProcessoById(id) {
 
 // Criar processo (opcionalmente com array de itens)
 export async function createProcesso(processo) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos`, {
     method: 'POST',
     headers: {
@@ -53,7 +53,7 @@ export async function createProcesso(processo) {
 
 // Atualizar processo
 export async function updateProcesso(id, processo) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos/${id}`, {
     method: 'PUT',
     headers: {
@@ -70,7 +70,7 @@ export async function updateProcesso(id, processo) {
 
 // Deletar processo (cascata)
 export async function deleteProcesso(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
@@ -83,7 +83,7 @@ export async function deleteProcesso(id) {
 
 // Concluir processo (entrada de estoque)
 export async function concluirProcesso(id, body) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos/${id}/concluir`, {
     method: 'POST',
     headers: {
@@ -100,7 +100,7 @@ export async function concluirProcesso(id, body) {
 
 // Cancelar processo (sem movimentação de estoque)
 export async function cancelarProcesso(id, body) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processos/${id}/cancelar`, {
     method: 'POST',
     headers: {
@@ -120,7 +120,7 @@ export async function cancelarProcesso(id, body) {
 
 // Adicionar item a um processo
 export async function addItemToProcesso(processoItem) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processo-items`, {
     method: 'POST',
     headers: {
@@ -138,7 +138,7 @@ export async function addItemToProcesso(processoItem) {
 
 // Atualizar item do processo (status, preço, quantidade)
 export async function updateProcessoItem(id, processoItem) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processo-items/${id}`, {
     method: 'PUT',
     headers: {
@@ -156,7 +156,7 @@ export async function updateProcessoItem(id, processoItem) {
 
 // Remover item do processo
 export async function deleteProcessoItem(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/processo-items/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },

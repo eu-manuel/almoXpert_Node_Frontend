@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api'; // ajuste se necessário
 
 // Buscar todos os fornecedores
 export async function getSuppliers() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/supplier`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -14,7 +14,7 @@ export async function getSuppliers() {
 
 // Criar fornecedor
 export async function createSupplier(supplier) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/supplier`, {
     method: 'POST',
     headers: {
@@ -31,7 +31,7 @@ export async function createSupplier(supplier) {
 
 // Atualizar fornecedor
 export async function updateSupplier(id, supplier) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/supplier/${id}`, {
     method: 'PUT',
     headers: {
@@ -48,7 +48,7 @@ export async function updateSupplier(id, supplier) {
 
 // Excluir fornecedor
 export async function deleteSupplier(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/supplier/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
