@@ -34,3 +34,14 @@ export async function register(nome, email, senha) {
 
   return data;
 }
+
+export async function getMe() {
+  const token = sessionStorage.getItem('token');
+  const res = await fetch(`${API_URL}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erro ao buscar usuário');
+  return data;
+}

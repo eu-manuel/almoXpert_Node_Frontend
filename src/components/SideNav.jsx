@@ -18,7 +18,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import LogoutIcon from "@mui/icons-material/Logout";
 import almoXlogo from "/Logo Pequena AlmoXpert.png";
 import { UserContext } from '../context/UserContext';
-import { getUserById } from '../services/userManagementServices';
+import { getMe } from '../services/userServices';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -54,7 +54,7 @@ export default function SideNav() {
     }
 
     // Usuário comum: busca as permissões dele e filtra o menu
-    getUserById(user.id)
+    getMe()
       .then((userData) => {
         const userPermissions = userData.Permissions?.map((p) => p.nome) ?? [];
 
