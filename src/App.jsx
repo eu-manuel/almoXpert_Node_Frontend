@@ -72,7 +72,13 @@ function App() {
 
         <Route
           path="/users"
-          element={user ? <UsersPage /> : <Navigate to="/login" />}
+          element={
+            user
+              ? user.isAdmin
+                ? <UsersPage />
+                : <Navigate to="/dashboard" />
+              : <Navigate to="/login" />
+          }
         />
 
         {/* Redireciona qualquer rota inválida para o login */}

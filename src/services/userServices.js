@@ -19,22 +19,6 @@ export async function login(email, senha) {
   return data;
 }
 
-export async function register(nome, email, senha) {
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, email, senha }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || 'Erro ao cadastrar');
-  }
-
-  return data;
-}
-
 export async function getMe() {
   const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/auth/me`, {

@@ -4,18 +4,16 @@ import {
   Box,
   TextField,
   Button,
-  Typography,
   InputAdornment,
   IconButton,
   Alert,
-  Link,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 
-export default function LoginForm({ onLogin, onSwitchToRegister }) {
+export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [error, setError] = useState('');
@@ -111,19 +109,6 @@ export default function LoginForm({ onLogin, onSwitchToRegister }) {
       >
         {loading ? 'Entrando...' : 'Entrar'}
       </Button>
-
-      <Typography variant="body2" align="center" sx={{ mt: 1 }}>
-        Não tem uma conta?{' '}
-        <Link
-          component="button"
-          type="button"
-          variant="body2"
-          onClick={onSwitchToRegister}
-          sx={{ cursor: 'pointer' }}
-        >
-          Cadastre-se
-        </Link>
-      </Typography>
 
       {error && (
         <Alert severity="error" sx={{ mt: 1 }}>
