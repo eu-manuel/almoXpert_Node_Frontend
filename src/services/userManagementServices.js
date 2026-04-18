@@ -62,7 +62,7 @@ export async function updateUser(id, userData) {
   return data;
 }
 
-// Excluir usuário
+// Excluir usuário permanentemente
 export async function deleteUser(id) {
   const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/users/${id}`, {
@@ -73,6 +73,16 @@ export async function deleteUser(id) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Erro ao excluir usuário');
   return data;
+}
+
+// Desativar usuário (ativo = false)
+export async function deactivateUser(id) {
+  return updateUser(id, { ativo: false });
+}
+
+// Reativar usuário (ativo = true)
+export async function reactivateUser(id) {
+  return updateUser(id, { ativo: true });
 }
 
 // =============================================
