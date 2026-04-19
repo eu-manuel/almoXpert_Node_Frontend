@@ -19,20 +19,21 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import almoXlogo from "/Logo Pequena AlmoXpert.png";
 import { UserContext } from '../context/UserContext';
 import { getMe } from '../services/userServices';
+import PERMISSIONS from '../constants/permissions';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
 
 const ALL_MENU_ITEMS = [
   { name: "Dashboard", path: "/dashboard", icon: <HomeIcon />, permission: null },
-  { name: "Cadastro Itens", path: "/items", icon: <CategoryIcon />, permission: "EDIT_ITEMS" },
-  { name: "Estoque", path: "/stock", icon: <InventoryIcon />, permission: "MANAGE_STOCK" },
-  { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon />, permission: "MANAGE_WAREHOUSES" },
-  { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon />, permission: "MANAGE_SUPPLIERS" },
-  { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon />, permission: "MANAGE_MOVEMENTS" },
-  { name: "Processos", path: "/processos", icon: <AssignmentIcon />, permission: "MANAGE_PROCESSOS" },
-  { name: "Relatórios", path: "/reports", icon: <AssessmentIcon />, permission: "VIEW_REPORTS" },
-  { name: "Usuários", path: "/users", icon: <ManageAccountsIcon />, permission: "MANAGE_USERS" },
+  { name: "Cadastro Itens", path: "/items", icon: <CategoryIcon />, permission: PERMISSIONS.EDIT_ITEMS },
+  { name: "Estoque", path: "/stock", icon: <InventoryIcon />, permission: PERMISSIONS.MANAGE_STOCK },
+  { name: "Almoxarifados", path: "/warehouses", icon: <WarehouseIcon />, permission: PERMISSIONS.MANAGE_WAREHOUSES },
+  { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon />, permission: PERMISSIONS.MANAGE_SUPPLIERS },
+  { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon />, permission: PERMISSIONS.MANAGE_MOVEMENTS },
+  { name: "Processos", path: "/processos", icon: <AssignmentIcon />, permission: PERMISSIONS.MANAGE_PROCESSOS },
+  { name: "Relatórios", path: "/reports", icon: <AssessmentIcon />, permission: PERMISSIONS.VIEW_REPORTS },
+  { name: "Usuários", path: "/users", icon: <ManageAccountsIcon />, permission: PERMISSIONS.MANAGE_USERS },
   { name: "Configurações", path: "/settings", icon: <SettingsIcon />, permission: null },
 ];
 
