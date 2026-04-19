@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Buscar todas as movimentações
 export async function getMovements() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/moviment`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -14,7 +14,7 @@ export async function getMovements() {
 
 // Criar movimentação
 export async function createMovement(movement) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/moviment`, {
     method: 'POST',
     headers: {
@@ -31,7 +31,7 @@ export async function createMovement(movement) {
 
 // Atualizar movimentação
 export async function updateMovement(id, movement) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/moviment/${id}`, {
     method: 'PUT',
     headers: {
@@ -48,7 +48,7 @@ export async function updateMovement(id, movement) {
 
 // Excluir movimentação
 export async function deleteMovement(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/moviment/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },

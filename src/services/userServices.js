@@ -14,23 +14,46 @@ export async function login(email, senha) {
   }
 
   // salvar token localmente
-  localStorage.setItem('token', data.token);
+  sessionStorage.setItem('token', data.token);
 
   return data;
 }
 
-export async function register(nome, email, senha) {
-  const res = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, email, senha }),
+export async function getMe() {
+  const token = sessionStorage.getItem('token');
+  const res = await fetch(`${API_URL}/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erro ao buscar usuário');
+  return data;
+}
 
-  if (!res.ok) {
-    throw new Error(data.error || 'Erro ao cadastrar');
-  }
+export async function updateProfile(profileData) {
+  const token = sessionStorage.getItem('token');
+  const res = await fetch(`${API_URL}/auth/me`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(profileData),
+  });
 
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erro ao atualizar perfil');
+  return data;
+}
+
+export async function deactivateAccount() {
+  const token = sessionStorage.getItem('token');
+  const res = await fetch(`${API_URL}/auth/me`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erro ao desativar conta');
   return data;
 }

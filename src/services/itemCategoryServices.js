@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:3000/api';
  * @returns {Promise<Array>} Lista de categorias do item
  */
 export async function getItemCategories(itemId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${itemId}/categories`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -25,7 +25,7 @@ export async function getItemCategories(itemId) {
  * @returns {Promise<Object>} Item atualizado com todas as categorias
  */
 export async function addCategoryToItem(itemId, categoriaId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${itemId}/categories`, {
     method: 'POST',
     headers: {
@@ -49,7 +49,7 @@ export async function addCategoryToItem(itemId, categoriaId) {
  * @returns {Promise<Object>} Item atualizado com categorias restantes
  */
 export async function removeCategoryFromItem(itemId, categoriaId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/items/${itemId}/categories/${categoriaId}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },

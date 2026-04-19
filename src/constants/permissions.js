@@ -1,0 +1,17 @@
+/**
+ * Constantes de permissões do sistema.
+ * Fonte única de verdade — use estas constantes em vez de strings soltas.
+ */
+const PERMISSIONS = {
+  EDIT_ITEMS: 'EDIT_ITEMS',
+  MANAGE_STOCK: 'MANAGE_STOCK',
+  MANAGE_WAREHOUSES: 'MANAGE_WAREHOUSES',
+  MANAGE_SUPPLIERS: 'MANAGE_SUPPLIERS',
+  MANAGE_MOVEMENTS: 'MANAGE_MOVEMENTS',
+  MANAGE_PROCESSOS: 'MANAGE_PROCESSOS',
+  MANAGE_CATEGORIES: 'MANAGE_CATEGORIES',
+  VIEW_REPORTS: 'VIEW_REPORTS',
+  MANAGE_USERS: 'MANAGE_USERS',
+};
+
+export default PERMISSIONS;

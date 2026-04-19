@@ -12,9 +12,9 @@ export default function LoginPage() {
     // salva no contexto
     setUser(userData);
 
-    // opcional: salvar no localStorage para manter login após recarregar
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', userData.token);
+    // opcional: salvar no sessionStorage para manter login após recarregar
+    sessionStorage.setItem('user', JSON.stringify(userData));
+    sessionStorage.setItem('token', userData.token);
 
     // redireciona para dashboard
     navigate('/dashboard');

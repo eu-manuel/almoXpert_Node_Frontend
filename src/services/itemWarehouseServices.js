@@ -2,7 +2,7 @@ const API_URL = 'http://localhost:3000/api';
 
 // Buscar itens de um almoxarifado específico (estoque)
 export async function getItemsByWarehouse(warehouseId) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(
     `${API_URL}/item-warehouses?id_almoxarifado=${warehouseId}`,
     {
@@ -18,7 +18,7 @@ export async function getItemsByWarehouse(warehouseId) {
 
 // Buscar todos os vínculos item-almoxarifado
 export async function getAllItemWarehouses() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-warehouses`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -31,7 +31,7 @@ export async function getAllItemWarehouses() {
 
 // Buscar vínculo específico por ID
 export async function getItemWarehouseById(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-warehouses/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -43,7 +43,7 @@ export async function getItemWarehouseById(id) {
 
 // Criar vínculo item-almoxarifado (entrada de estoque)
 export async function createItemWarehouse(itemWarehouse) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-warehouses`, {
     method: 'POST',
     headers: {
@@ -61,7 +61,7 @@ export async function createItemWarehouse(itemWarehouse) {
 
 // Atualizar vínculo item-almoxarifado
 export async function updateItemWarehouse(id, itemWarehouse) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-warehouses/${id}`, {
     method: 'PUT',
     headers: {
@@ -78,7 +78,7 @@ export async function updateItemWarehouse(id, itemWarehouse) {
 
 // Deletar vínculo item-almoxarifado
 export async function deleteItemWarehouse(id) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(`${API_URL}/item-warehouses/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
