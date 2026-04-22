@@ -15,11 +15,14 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import LogoutIcon from "@mui/icons-material/Logout";
 import almoXlogo from "/Logo Pequena AlmoXpert.png";
 import { UserContext } from '../context/UserContext';
 import { getMe } from '../services/userServices';
 import PERMISSIONS from '../constants/permissions';
+import NotificationBell from './NotificationBell';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -32,6 +35,8 @@ const ALL_MENU_ITEMS = [
   { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon />, permission: PERMISSIONS.MANAGE_SUPPLIERS },
   { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon />, permission: PERMISSIONS.MANAGE_MOVEMENTS },
   { name: "Processos", path: "/processos", icon: <AssignmentIcon />, permission: PERMISSIONS.MANAGE_PROCESSOS },
+  { name: "Tickets", path: "/tickets", icon: <ConfirmationNumberIcon />, permission: PERMISSIONS.ABRIR_TICKET_PEDIDO },
+  { name: "Atendimento", path: "/atendimento", icon: <SupportAgentIcon />, permission: PERMISSIONS.ATENDENTE_PEDIDOS },
   { name: "Relatórios", path: "/reports", icon: <AssessmentIcon />, permission: PERMISSIONS.VIEW_REPORTS },
   { name: "Usuários", path: "/users", icon: <ManageAccountsIcon />, permission: PERMISSIONS.MANAGE_USERS },
   { name: "Configurações", path: "/settings", icon: <SettingsIcon />, permission: null },
@@ -95,19 +100,25 @@ export default function SideNav() {
             <Box component="span" sx={{ fontSize: '1.5rem', fontWeight: 700, color: 'primary.main' }}>
               AlmoXpert
             </Box>
-            <IconButton onClick={() => setOpen(!open)} size="small" sx={{ color: 'text.secondary' }}>
-              <MenuIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <NotificationBell />
+              <IconButton onClick={() => setOpen(!open)} size="small" sx={{ color: 'text.secondary' }}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
           </>
         ) : (
-          <IconButton onClick={() => setOpen(!open)} sx={{ color: 'text.secondary' }}>
-            <Box
-              component="img"
-              src={almoXlogo}
-              alt="Logo AlmoXpert"
-              sx={{ width: 40, height: 40, pointerEvents: 'none' }}
-            />
-          </IconButton>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+            <IconButton onClick={() => setOpen(!open)} sx={{ color: 'text.secondary' }}>
+              <Box
+                component="img"
+                src={almoXlogo}
+                alt="Logo AlmoXpert"
+                sx={{ width: 40, height: 40, pointerEvents: 'none' }}
+              />
+            </IconButton>
+            <NotificationBell />
+          </Box>
         )}
       </Box>
 
