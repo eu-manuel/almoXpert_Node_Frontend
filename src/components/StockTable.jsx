@@ -160,6 +160,7 @@ export default function StockTable({ items, loading, warehouseName, onRefresh })
               <TableCell>Nome do Item</TableCell>
               <TableCell>Código</TableCell>
               <TableCell>Unidade</TableCell>
+              <TableCell>CR</TableCell>
               <TableCell align="center">Quantidade</TableCell>
               <TableCell>Data de Entrada</TableCell>
               <TableCell align="center">Ações</TableCell>
@@ -179,6 +180,9 @@ export default function StockTable({ items, loading, warehouseName, onRefresh })
                 </TableCell>
                 <TableCell>
                   {itemWarehouse.Item?.unidade_medida || '-'}
+                </TableCell>
+                <TableCell>
+                  {itemWarehouse.CentroResponsabilidade?.codigo || '-'}
                 </TableCell>
                 <TableCell align="center">
                   <Chip
