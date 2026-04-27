@@ -15,9 +15,8 @@ import {
 
 const POLL_INTERVAL = 30000; // 30 segundos
 
-export default function NotificationBell() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [notificacoes, setNotificacoes] = useState([]);
+// Hook reutilizável para obter a contagem de notificações não lidas
+export function useNotificationCount() {
   const [count, setCount] = useState(0);
 
   const fetchCount = useCallback(async () => {
@@ -29,6 +28,23 @@ export default function NotificationBell() {
     }
   }, []);
 
+  useEffect(() => {
+    fetchCount();
+    const interval = setInterval(fetchCount, POLL_INTERVAL);
+    return () => clearInterval(interval);
+  }, [fetchCount]);
+
+  return { count, setCount, fetchCount };
+}
+
+export default function NotificationBell({ externalCount }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notificacoes, setNotificacoes] = useState([]);
+  // Usa hook interno apenas se não receber count externo
+  const internal = useNotificationCount();
+  const count = externalCount !== undefined ? externalCount : internal.count;
+  const setCount = internal.setCount;
+
   const fetchNotificacoes = useCallback(async () => {
     try {
       const data = await getNotificacoes();
@@ -37,13 +53,6 @@ export default function NotificationBell() {
       console.error('Erro ao buscar notificações:', err.message);
     }
   }, []);
-
-  // Polling para badge count
-  useEffect(() => {
-    fetchCount();
-    const interval = setInterval(fetchCount, POLL_INTERVAL);
-    return () => clearInterval(interval);
-  }, [fetchCount]);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
