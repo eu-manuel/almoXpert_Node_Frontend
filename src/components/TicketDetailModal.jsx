@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import {
   Box, Typography, Chip, Divider, TextField, Button,
-  Alert, CircularProgress, Paper, List, ListItem, ListItemText,
+  Alert, CircularProgress, Paper, List, ListItem, ListItemText, Tooltip,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -207,16 +207,18 @@ export default function TicketDetailModal({ ticket, isOpen, onClose, onRefresh }
                 onChange={(e) => setActionMsg(e.target.value)}
                 placeholder="Adicione uma mensagem ao enviar..."
               />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleAction(enviarParaValidacao, actionMsg)}
-                disabled={loading}
-                startIcon={<SendIcon />}
-                sx={{ whiteSpace: 'nowrap' }}
-              >
-                Enviar p/ Validação
-              </Button>
+              <Tooltip title="Envia o ticket para análise e aprovação do atendente responsável." arrow>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleAction(enviarParaValidacao, actionMsg)}
+                  disabled={loading}
+                  startIcon={<SendIcon />}
+                  sx={{ whiteSpace: 'nowrap' }}
+                >
+                  Enviar p/ Validação
+                </Button>
+              </Tooltip>
             </Box>
           </>
         )}
@@ -232,16 +234,18 @@ export default function TicketDetailModal({ ticket, isOpen, onClose, onRefresh }
               onChange={(e) => setActionMsg(e.target.value)}
               placeholder="Informe o motivo..."
             />
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleAction(cancelarTicket, actionMsg)}
-              disabled={loading}
-              startIcon={<CancelIcon />}
-              sx={{ whiteSpace: 'nowrap' }}
-            >
-              Cancelar Ticket
-            </Button>
+            <Tooltip title="Cancela definitivamente o ticket. Esta ação não pode ser desfeita." arrow>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleAction(cancelarTicket, actionMsg)}
+                disabled={loading}
+                startIcon={<CancelIcon />}
+                sx={{ whiteSpace: 'nowrap' }}
+              >
+                Cancelar Ticket
+              </Button>
+            </Tooltip>
           </Box>
         )}
 

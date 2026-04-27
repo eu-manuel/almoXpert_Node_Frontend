@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import {
   Box, Typography, Chip, Divider, TextField, Button,
-  Alert, CircularProgress, Paper, List, ListItem, ListItemText,
+  Alert, CircularProgress, Paper, List, ListItem, ListItemText, Tooltip,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -206,48 +206,56 @@ export default function AtendimentoDetailModal({ ticket, isOpen, onClose, onRefr
 
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               {canAprovar && (
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={() => handleAction(aprovarTicket, actionMsg)}
-                  disabled={loading}
-                  startIcon={<CheckCircleIcon />}
-                >
-                  Aprovar
-                </Button>
+                <Tooltip title="Aprova o pedido e autoriza a entrega dos itens solicitados ao solicitante." arrow>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleAction(aprovarTicket, actionMsg)}
+                    disabled={loading}
+                    startIcon={<CheckCircleIcon />}
+                  >
+                    Aprovar
+                  </Button>
+                </Tooltip>
               )}
               {canRecusar && (
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleAction(recusarTicket, actionMsg)}
-                  disabled={loading}
-                  startIcon={<BlockIcon />}
-                >
-                  Recusar
-                </Button>
+                <Tooltip title="Recusa o pedido e devolve ao solicitante para revisão ou correção." arrow>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleAction(recusarTicket, actionMsg)}
+                    disabled={loading}
+                    startIcon={<BlockIcon />}
+                  >
+                    Recusar
+                  </Button>
+                </Tooltip>
               )}
               {canAguardar && (
-                <Button
-                  variant="contained"
-                  color="warning"
-                  onClick={() => handleAction(aguardarConclusao, actionMsg)}
-                  disabled={loading}
-                  startIcon={<HourglassBottomIcon />}
-                >
-                  Aguardar Conclusão
-                </Button>
+                <Tooltip title="Coloca o ticket em espera até que itens de emergência sejam providenciados ou uma pendência seja resolvida." arrow>
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={() => handleAction(aguardarConclusao, actionMsg)}
+                    disabled={loading}
+                    startIcon={<HourglassBottomIcon />}
+                  >
+                    Aguardar Conclusão
+                  </Button>
+                </Tooltip>
               )}
               {canCancel && (
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleAction(cancelarTicket, actionMsg)}
-                  disabled={loading}
-                  startIcon={<CancelIcon />}
-                >
-                  Cancelar
-                </Button>
+                <Tooltip title="Cancela definitivamente o ticket. Esta ação não pode ser desfeita." arrow>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleAction(cancelarTicket, actionMsg)}
+                    disabled={loading}
+                    startIcon={<CancelIcon />}
+                  >
+                    Cancelar
+                  </Button>
+                </Tooltip>
               )}
             </Box>
           </>

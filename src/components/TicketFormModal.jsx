@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box, TextField, Button, Typography, Autocomplete, Alert,
-  CircularProgress, IconButton, Chip,
+  CircularProgress, IconButton, Chip, Tooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DeleteIcon from '@mui/icons-material/Delete';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Modal from './GenericModal';
 import { getMeusCRs } from '../services/crServices';
-import { getItems } from '../services/itemServices';
+import { getItensByCR } from '../services/itemWarehouseServices';
 import { createTicket } from '../services/ticketServices';
 
 export default function TicketFormModal({ isOpen, onClose, onCreated }) {
   const [crs, setCRs] = useState([]);
-  const [items, setItems] = useState([]);
+  const [itensCR, setItensCR] = useState([]); // Itens disponíveis para o CR selecionado
   const [loadingCRs, setLoadingCRs] = useState(true);
-  const [loadingItems, setLoadingItems] = useState(true);
+  const [loadingItems, setLoadingItems] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,9 +35,17 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
   useEffect(() => {
     if (isOpen) {
       fetchCRs();
-      fetchItems();
     }
   }, [isOpen]);
+
+  // Quando o CR muda, buscar itens disponíveis para esse CR
+  useEffect(() => {
+    if (selectedCR) {
+      fetchItensByCR(selectedCR.id_cr);
+    } else {
+      setItensCR([]);
+    }
+  }, [selectedCR]);
 
   const fetchCRs = async () => {
     try {
@@ -50,19 +59,46 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
     }
   };
 
-  const fetchItems = async () => {
+  const fetchItensByCR = async (crId) => {
     try {
       setLoadingItems(true);
-      const data = await getItems();
-      setItems(data);
+      const data = await getItensByCR(crId);
+      setItensCR(data);
     } catch (err) {
-      console.error('Erro ao buscar itens:', err.message);
+      console.error('Erro ao buscar itens do CR:', err.message);
+      setItensCR([]);
     } finally {
       setLoadingItems(false);
     }
   };
 
   const hasEmergencyItems = ticketItens.some((i) => !i.id_item);
+
+  // Calcular a quantidade já alocada para um item no ticket (para limitar o max)
+  const getQuantidadeJaAlocada = (idItem) => {
+    return ticketItens
+      .filter((i) => i.id_item === idItem)
+      .reduce((sum, i) => sum + i.quantidade, 0);
+  };
+
+  // Calcular o máximo disponível para o item atualmente selecionado
+  const getMaxQuantidade = () => {
+    if (isManualItem || !currentItem) return undefined;
+    const jaAlocado = getQuantidadeJaAlocada(currentItem.id_item);
+    return currentItem.quantidade_disponivel - jaAlocado;
+  };
+
+  const handleCRChange = (_, newCR) => {
+    if (selectedCR && ticketItens.length > 0 && newCR?.id_cr !== selectedCR?.id_cr) {
+      // Limpar itens cadastrados ao trocar de CR (manter itens manuais se houver)
+      const itensManual = ticketItens.filter((i) => !i.id_item);
+      setTicketItens(itensManual);
+    }
+    setSelectedCR(newCR);
+    // Resetar item selecionado
+    setCurrentItem(null);
+    setCurrentQtd('');
+  };
 
   const handleAddItem = () => {
     if (isManualItem) {
@@ -77,18 +113,30 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
       ]);
     } else {
       if (!currentItem || !currentQtd) return;
+      const qtd = Number(currentQtd);
+      const maxDisponivel = getMaxQuantidade();
+
+      // Validação de segurança: impedir quantidade acima do disponível
+      if (maxDisponivel !== undefined && qtd > maxDisponivel) {
+        setError(`Quantidade máxima disponível para "${currentItem.nome}": ${maxDisponivel}`);
+        return;
+      }
+
       setTicketItens((prev) => [
         ...prev,
         {
           id_item: currentItem.id_item,
           nome_item: currentItem.nome,
-          quantidade: Number(currentQtd),
+          quantidade: qtd,
+          quantidade_disponivel: currentItem.quantidade_disponivel,
+          almoxarifados: currentItem.almoxarifados,
         },
       ]);
     }
     setCurrentItem(null);
     setCurrentNomeManual('');
     setCurrentQtd('');
+    setError('');
   };
 
   const handleRemoveItem = (index) => {
@@ -112,7 +160,11 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
       await createTicket({
         titulo: titulo.trim(),
         cr_id: selectedCR.id_cr,
-        itens: ticketItens,
+        itens: ticketItens.map((i) => ({
+          id_item: i.id_item,
+          nome_item: i.nome_item,
+          quantidade: i.quantidade,
+        })),
         mensagem: mensagem.trim(),
         justificativa_emergencia: hasEmergencyItems ? justificativa.trim() : null,
       });
@@ -122,6 +174,7 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
       setJustificativa('');
       setTicketItens([]);
       setSelectedCR(null);
+      setItensCR([]);
       onCreated?.();
       onClose();
     } catch (err) {
@@ -130,6 +183,9 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
       setSubmitting(false);
     }
   };
+
+  const maxQtd = getMaxQuantidade();
+  const maxAtingido = maxQtd !== undefined && maxQtd <= 0;
 
   return (
     <Modal title="Abrir Novo Ticket de Pedido" isOpen={isOpen} onClose={onClose} maxWidth="md">
@@ -147,7 +203,7 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
           options={crs}
           getOptionLabel={(opt) => `${opt.codigo}${opt.descricao ? ` — ${opt.descricao}` : ''}`}
           value={selectedCR}
-          onChange={(_, v) => setSelectedCR(v)}
+          onChange={handleCRChange}
           loading={loadingCRs}
           renderInput={(params) => (
             <TextField {...params} label="Centro de Responsabilidade (CR)" required />
@@ -171,18 +227,61 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
                 borderColor: item.id_item ? 'divider' : 'warning.main',
               }}
             >
-              <Typography variant="body2" sx={{ flex: 1 }}>
-                {item.nome_item}
-                {!item.id_item && (
-                  <Chip label="Fora do planejamento" size="small" color="warning" sx={{ ml: 1 }} />
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2">
+                  {item.nome_item}
+                  {!item.id_item && (
+                    <Chip label="Fora do planejamento" size="small" color="warning" sx={{ ml: 1 }} />
+                  )}
+                </Typography>
+                {item.almoxarifados && item.almoxarifados.length > 0 && (
+                  <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, flexWrap: 'wrap' }}>
+                    {item.almoxarifados.map((alm) => (
+                      <Tooltip
+                        key={alm.id_almoxarifado}
+                        title={`${alm.quantidade} un. disponíveis neste almoxarifado`}
+                      >
+                        <Chip
+                          label={`${alm.nome_almoxarifado}: ${alm.quantidade}`}
+                          size="small"
+                          variant="outlined"
+                          color="default"
+                          sx={{ fontSize: '0.7rem', height: 20 }}
+                        />
+                      </Tooltip>
+                    ))}
+                  </Box>
                 )}
-              </Typography>
+              </Box>
               <Chip label={`Qtd: ${item.quantidade}`} size="small" variant="outlined" />
+              {item.quantidade_disponivel && (
+                <Chip
+                  label={`Disp: ${item.quantidade_disponivel}`}
+                  size="small"
+                  variant="outlined"
+                  color="info"
+                />
+              )}
               <IconButton size="small" color="error" onClick={() => handleRemoveItem(idx)}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>
           ))}
+
+          {/* Aviso se nenhum CR selecionado */}
+          {!selectedCR && !isManualItem && (
+            <Alert severity="info" variant="outlined" sx={{ mb: 1 }}>
+              Selecione um CR acima para ver os itens disponíveis.
+            </Alert>
+          )}
+
+          {/* Aviso se CR selecionado mas sem itens */}
+          {selectedCR && !loadingItems && itensCR.length === 0 && !isManualItem && (
+            <Alert severity="warning" variant="outlined" sx={{ mb: 1 }} icon={<WarningAmberIcon />}>
+              Nenhum item cadastrado no estoque para o CR selecionado.
+              Use o modo <strong>Manual</strong> para solicitar via ticket de emergência.
+            </Alert>
+          )}
 
           {/* Form para adicionar item */}
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', mt: 1 }}>
@@ -207,32 +306,71 @@ export default function TicketFormModal({ isOpen, onClose, onCreated }) {
               <Autocomplete
                 size="small"
                 sx={{ flex: 1 }}
-                options={items}
-                getOptionLabel={(opt) => `${opt.nome} (${opt.codigo_interno || 'sem código'})`}
+                options={itensCR}
+                getOptionLabel={(opt) =>
+                  `${opt.nome} (${opt.codigo_interno || 'sem código'}) — Disp: ${opt.quantidade_disponivel} ${opt.unidade_medida || ''}`
+                }
                 value={currentItem}
-                onChange={(_, v) => setCurrentItem(v)}
+                onChange={(_, v) => {
+                  setCurrentItem(v);
+                  setCurrentQtd('');
+                }}
                 loading={loadingItems}
+                disabled={!selectedCR}
                 renderInput={(params) => (
-                  <TextField {...params} label="Selecionar item cadastrado" />
+                  <TextField
+                    {...params}
+                    label={selectedCR ? 'Selecionar item disponível' : 'Selecione um CR primeiro'}
+                  />
                 )}
-                noOptionsText="Nenhum item encontrado"
+                noOptionsText={
+                  selectedCR
+                    ? 'Nenhum item disponível para este CR'
+                    : 'Selecione um CR primeiro'
+                }
+                isOptionEqualToValue={(option, value) => option.id_item === value.id_item}
               />
             )}
 
-            <TextField
-              size="small"
-              type="number"
-              label="Qtd"
-              value={currentQtd}
-              onChange={(e) => setCurrentQtd(e.target.value)}
-              sx={{ width: 80 }}
-              inputProps={{ min: 1 }}
-            />
+            <Tooltip
+              title={
+                maxAtingido
+                  ? 'Quantidade máxima já adicionada ao ticket'
+                  : maxQtd !== undefined
+                    ? `Máximo disponível: ${maxQtd}`
+                    : ''
+              }
+            >
+              <TextField
+                size="small"
+                type="number"
+                label={maxQtd !== undefined ? `Qtd (máx: ${maxQtd})` : 'Qtd'}
+                value={currentQtd}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (!isManualItem && maxQtd !== undefined && val > maxQtd) {
+                    setCurrentQtd(String(maxQtd));
+                  } else {
+                    setCurrentQtd(e.target.value);
+                  }
+                }}
+                sx={{ width: 120 }}
+                inputProps={{
+                  min: 1,
+                  ...(maxQtd !== undefined && { max: maxQtd }),
+                }}
+                disabled={maxAtingido}
+              />
+            </Tooltip>
             <Button
               variant="outlined"
               size="small"
               onClick={handleAddItem}
-              disabled={isManualItem ? !currentNomeManual.trim() || !currentQtd : !currentItem || !currentQtd}
+              disabled={
+                isManualItem
+                  ? !currentNomeManual.trim() || !currentQtd
+                  : !currentItem || !currentQtd || maxAtingido
+              }
             >
               <AddIcon fontSize="small" />
             </Button>
