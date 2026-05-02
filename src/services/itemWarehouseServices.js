@@ -16,6 +16,19 @@ export async function getItemsByWarehouse(warehouseId) {
   return data;
 }
 
+// Buscar itens disponíveis para um CR específico (agrupados com soma de quantidades)
+export async function getItensByCR(crId) {
+  const token = sessionStorage.getItem('token');
+  const res = await fetch(`${API_URL}/item-warehouses/by-cr/${crId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await res.json();
+  if (!res.ok)
+    throw new Error(data.error || 'Erro ao buscar itens disponíveis para o CR');
+  return data;
+}
+
 // Buscar todos os vínculos item-almoxarifado
 export async function getAllItemWarehouses() {
   const token = sessionStorage.getItem('token');

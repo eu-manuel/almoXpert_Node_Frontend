@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer, List, ListItem, ListItemButton, ListItemIcon,
-  ListItemText, IconButton, Box, Divider, useMediaQuery, useTheme,
+  ListItemText, IconButton, Box, Divider, Badge, useMediaQuery, useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
@@ -15,11 +15,14 @@ import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import LogoutIcon from "@mui/icons-material/Logout";
 import almoXlogo from "/Logo Pequena AlmoXpert.png";
 import { UserContext } from '../context/UserContext';
 import { getMe } from '../services/userServices';
 import PERMISSIONS from '../constants/permissions';
+import NotificationBell, { useNotificationCount } from './NotificationBell';
 
 const DRAWER_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -32,6 +35,8 @@ const ALL_MENU_ITEMS = [
   { name: "Fornecedores", path: "/suppliers", icon: <PeopleIcon />, permission: PERMISSIONS.MANAGE_SUPPLIERS },
   { name: "Movimentações", path: "/movements", icon: <SwapHorizIcon />, permission: PERMISSIONS.MANAGE_MOVEMENTS },
   { name: "Processos", path: "/processos", icon: <AssignmentIcon />, permission: PERMISSIONS.MANAGE_PROCESSOS },
+  { name: "Tickets", path: "/tickets", icon: <ConfirmationNumberIcon />, permission: PERMISSIONS.ABRIR_TICKET_PEDIDO },
+  { name: "Atendimento", path: "/atendimento", icon: <SupportAgentIcon />, permission: PERMISSIONS.ATENDENTE_PEDIDOS },
   { name: "Relatórios", path: "/reports", icon: <AssessmentIcon />, permission: PERMISSIONS.VIEW_REPORTS },
   { name: "Usuários", path: "/users", icon: <ManageAccountsIcon />, permission: PERMISSIONS.MANAGE_USERS },
   { name: "Configurações", path: "/settings", icon: <SettingsIcon />, permission: null },
@@ -44,6 +49,7 @@ export default function SideNav() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const location = useLocation();
   const { user } = useContext(UserContext);
+  const { count: notifCount } = useNotificationCount();
 
   useEffect(() => {
     if (!user) return;
@@ -95,19 +101,48 @@ export default function SideNav() {
             <Box component="span" sx={{ fontSize: '1.5rem', fontWeight: 700, color: 'primary.main' }}>
               AlmoXpert
             </Box>
-            <IconButton onClick={() => setOpen(!open)} size="small" sx={{ color: 'text.secondary' }}>
-              <MenuIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <NotificationBell externalCount={notifCount} />
+              <IconButton onClick={() => setOpen(!open)} size="small" sx={{ color: 'text.secondary' }}>
+                <MenuIcon />
+              </IconButton>
+            </Box>
           </>
         ) : (
-          <IconButton onClick={() => setOpen(!open)} sx={{ color: 'text.secondary' }}>
-            <Box
-              component="img"
-              src={almoXlogo}
-              alt="Logo AlmoXpert"
-              sx={{ width: 40, height: 40, pointerEvents: 'none' }}
-            />
-          </IconButton>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <IconButton onClick={() => setOpen(true)} sx={{ color: 'text.secondary' }}>
+              <Badge
+                variant={notifCount > 0 ? 'dot' : 'standard'}
+                color="error"
+                overlap="circular"
+                invisible={notifCount === 0}
+                sx={{
+                  '& .MuiBadge-badge': {
+                    top: 4,
+                    right: 4,
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    border: '2px solid',
+                    borderColor: 'background.paper',
+                    animation: notifCount > 0 ? 'pulse 2s infinite' : 'none',
+                    '@keyframes pulse': {
+                      '0%': { transform: 'scale(1)', opacity: 1 },
+                      '50%': { transform: 'scale(1.3)', opacity: 0.7 },
+                      '100%': { transform: 'scale(1)', opacity: 1 },
+                    },
+                  },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={almoXlogo}
+                  alt="Logo AlmoXpert"
+                  sx={{ width: 40, height: 40, pointerEvents: 'none' }}
+                />
+              </Badge>
+            </IconButton>
+          </Box>
         )}
       </Box>
 

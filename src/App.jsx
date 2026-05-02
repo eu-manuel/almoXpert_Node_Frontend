@@ -14,6 +14,8 @@ import SupplierPage from "./pages/SupplierPage";
 import MovementPage from "./pages/MovementPage";
 import ReportsPage from "./pages/ReportsPage";
 import ProcessoPage from "./pages/ProcessoPage";
+import TicketsPage from "./pages/TicketsPage";
+import FilaAtendimentoPage from "./pages/FilaAtendimentoPage";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 
@@ -69,6 +71,16 @@ function App() {
         <Route
           path="/processos"
           element={user ? <ProcessoPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/tickets"
+          element={user ? <TicketsPage /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/atendimento"
+          element={user ? <FilaAtendimentoPage /> : <Navigate to="/login" />}
         />
 
         <Route

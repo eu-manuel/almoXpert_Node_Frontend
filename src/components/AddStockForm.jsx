@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getItems } from "../services/itemServices";
 import { createItemWarehouse } from "../services/itemWarehouseServices";
+import { getMeusCRs } from "../services/crServices";
 import Modal from "./GenericModal";
 import ItemForm from "./ItemForm";
 import {
@@ -24,10 +25,13 @@ export default function AddStockForm({
   onSaved,
 }) {
   const [items, setItems] = useState([]);
+  const [crs, setCRs] = useState([]);
   const [loadingItems, setLoadingItems] = useState(true);
+  const [loadingCRs, setLoadingCRs] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedCR, setSelectedCR] = useState(null);
   const [createItemModalOpen, setCreateItemModalOpen] = useState(false);
   
   const [form, setForm] = useState({
@@ -53,7 +57,21 @@ export default function AddStockForm({
 
   useEffect(() => {
     fetchItems();
+    fetchCRs();
   }, []);
+
+  // Buscar CRs do usuário logado
+  const fetchCRs = async () => {
+    try {
+      setLoadingCRs(true);
+      const data = await getMeusCRs();
+      setCRs(data);
+    } catch (err) {
+      console.error("Erro ao buscar CRs:", err.message);
+    } finally {
+      setLoadingCRs(false);
+    }
+  };
 
   // Callback quando um novo item é criado pelo ItemForm
   const handleItemCreated = async () => {
@@ -96,6 +114,7 @@ export default function AddStockForm({
         quantidade: Number(form.quantidade),
         data_entrada: new Date().toISOString(),
         observacao: form.observacao || 'Entrada de estoque',
+        cr_id: selectedCR ? Number(selectedCR.id_cr) : null,
       });
 
       onSaved?.();
@@ -167,6 +186,32 @@ export default function AddStockForm({
             <AddCircleOutlineIcon />
           </Button>
         </Box>
+
+        <Autocomplete
+          options={crs}
+          getOptionLabel={(option) => `${option.codigo}${option.descricao ? ` — ${option.descricao}` : ''}`}
+          value={selectedCR}
+          onChange={(_, newValue) => setSelectedCR(newValue)}
+          loading={loadingCRs}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Centro de Responsabilidade (CR)"
+              helperText="Opcional — associe este item a um CR para controle de planejamento"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loadingCRs ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+          noOptionsText="Nenhum CR vinculado ao seu perfil"
+          loadingText="Carregando CRs..."
+        />
 
         <TextField
           fullWidth

@@ -3,6 +3,7 @@ import SideNav from '../components/SideNav';
 import UserTable from '../components/UserTable';
 import UserFormModal from '../components/UserFormModal';
 import UserPermissionsModal from '../components/UserPermissionsModal';
+import UserCRModal from '../components/UserCRModal';
 import { UserContext } from '../context/UserContext';
 import {
   Box,
@@ -31,6 +32,10 @@ export default function UsersPage() {
   // Modal de permissões
   const [permModalOpen, setPermModalOpen] = useState(false);
   const [userForPerms, setUserForPerms] = useState(null);
+
+  // Modal de CRs
+  const [crModalOpen, setCrModalOpen] = useState(false);
+  const [userForCRs, setUserForCRs] = useState(null);
 
   const { user } = useContext(UserContext);
 
@@ -61,6 +66,18 @@ export default function UsersPage() {
   const handleClosePerms = () => {
     setPermModalOpen(false);
     setUserForPerms(null);
+  };
+
+  // Abrir modal de CRs
+  const handleManageCRs = (userData) => {
+    setUserForCRs(userData);
+    setCrModalOpen(true);
+  };
+
+  // Fechar modal de CRs
+  const handleCloseCRs = () => {
+    setCrModalOpen(false);
+    setUserForCRs(null);
   };
 
   if (!user) {
@@ -104,6 +121,7 @@ export default function UsersPage() {
             refreshFlag={refreshFlag}
             onEdit={handleEdit}
             onManagePermissions={handleManagePermissions}
+            onManageCRs={handleManageCRs}
           />
 
           {/* FAB para criar novo usuário */}
@@ -140,6 +158,14 @@ export default function UsersPage() {
             open={permModalOpen}
             onClose={handleClosePerms}
             user={userForPerms}
+            onChanged={handleRefresh}
+          />
+
+          {/* Modal de CRs */}
+          <UserCRModal
+            open={crModalOpen}
+            onClose={handleCloseCRs}
+            user={userForCRs}
             onChanged={handleRefresh}
           />
         </Container>

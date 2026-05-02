@@ -34,8 +34,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
-export default function UserTable({ refreshFlag, onEdit, onManagePermissions }) {
+export default function UserTable({ refreshFlag, onEdit, onManagePermissions, onManageCRs }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -252,6 +253,15 @@ export default function UserTable({ refreshFlag, onEdit, onManagePermissions }) 
                           onClick={() => onManagePermissions?.(user)}
                         >
                           <SecurityIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Vincular CRs">
+                        <IconButton
+                          size="small"
+                          color="info"
+                          onClick={() => onManageCRs?.(user)}
+                        >
+                          <AccountBalanceIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Editar">
