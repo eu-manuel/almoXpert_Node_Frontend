@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { API_URL } from '../services/api';
 import {
   Autocomplete,
   Box,
@@ -89,7 +90,6 @@ const REPORT_FILTERS = {
 };
 
 /* ───── Funções para carregar opções dos selects ───── */
-const API_URL = 'http://localhost:3000/api';
 
 async function fetchOptions(source) {
   const token = sessionStorage.getItem('token');
