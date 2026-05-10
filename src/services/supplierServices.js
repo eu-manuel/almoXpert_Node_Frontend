@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api'; // ajuste se necessário
+import { API_URL } from './api';
 
 // Buscar todos os fornecedores
 export async function getSuppliers() {

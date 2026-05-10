@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+import { API_URL } from './api';
 
 // Buscar itens de um almoxarifado específico (estoque)
 export async function getItemsByWarehouse(warehouseId) {

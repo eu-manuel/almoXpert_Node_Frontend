@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+import { API_URL } from './api';
 
 // Buscar almoxarifados do usuário logado (responsável)
 export async function getMyWarehouses() {
