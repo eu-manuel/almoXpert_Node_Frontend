@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   createProcesso,
   updateProcesso,
 } from '../services/processoServices';
 import { getWarehouses } from '../services/warehouseServices';
+import { getCRs } from '../services/crServices';
+import { getMe } from '../services/userServices';
+import { UserContext } from '../context/UserContext';
+import PERMISSIONS from '../constants/permissions';
 import {
   Dialog,
   DialogTitle,
@@ -18,6 +22,7 @@ import {
   InputAdornment,
   MenuItem,
   Tooltip,
+  Autocomplete,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -29,6 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 const emptyForm = {
   numero_processo: '',
   id_almoxarifado: '',
+  cr_id: '',
   observacao: '',
 };
 
@@ -40,6 +46,7 @@ export default function ProcessoFormModal({
   onClose: externalOnClose,
   showFab = true,
 }) {
+  const { user } = useContext(UserContext);
   const [internalOpen, setInternalOpen] = useState(false);
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
 
@@ -47,6 +54,8 @@ export default function ProcessoFormModal({
   const [error, setError] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [warehouses, setWarehouses] = useState([]);
+  const [crs, setCrs] = useState([]);
+  const [loadingCRs, setLoadingCRs] = useState(false);
 
   const isEditMode = !!processoToEdit;
 
@@ -69,12 +78,47 @@ export default function ProcessoFormModal({
       setForm({
         numero_processo: processoToEdit.numero_processo || '',
         id_almoxarifado: processoToEdit.id_almoxarifado || '',
+        cr_id: processoToEdit.cr_id || '',
         observacao: processoToEdit.observacao || '',
       });
     } else {
       setForm(emptyForm);
     }
   }, [processoToEdit]);
+
+  // Carregar CRs apenas quando o modal estiver aberto e o usuário tiver permissão
+  useEffect(() => {
+    const fetchCRs = async () => {
+      if (!open || !user) return;
+
+      setLoadingCRs(true);
+      try {
+        // Admin vê tudo sem consultar permissões
+        let allowed = !!user.isAdmin;
+
+        if (!allowed) {
+          const me = await getMe();
+          const userPermissions = me.Permissions?.map((p) => p.nome) ?? [];
+          allowed = userPermissions.includes(PERMISSIONS.MANAGE_PROCESSOS);
+        }
+
+        if (!allowed) {
+          setCrs([]);
+          return;
+        }
+
+        const data = await getCRs();
+        setCrs(data);
+      } catch (err) {
+        console.error('Erro ao buscar CRs:', err.message);
+        setCrs([]);
+      } finally {
+        setLoadingCRs(false);
+      }
+    };
+
+    fetchCRs();
+  }, [open, user]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -113,10 +157,17 @@ export default function ProcessoFormModal({
       return;
     }
 
+    if (!form.cr_id) {
+      setError('Selecione um Centro de Responsabilidade (CR).');
+      setLoading(false);
+      return;
+    }
+
     try {
       const dataToSend = {
         ...form,
         id_almoxarifado: parseInt(form.id_almoxarifado, 10),
+        cr_id: parseInt(form.cr_id, 10),
       };
 
       if (isEditMode) {
@@ -248,6 +299,36 @@ export default function ProcessoFormModal({
                     </MenuItem>
                   ))}
                 </TextField>
+              </Grid>
+
+              {/* Centro de Responsabilidade (CR) */}
+              <Grid size={{ xs: 12 }}>
+                <Autocomplete
+                  options={crs}
+                  getOptionLabel={(opt) =>
+                    `${opt.codigo}${opt.descricao ? ` — ${opt.descricao}` : ''}`
+                  }
+                  value={
+                    crs.find((cr) => cr.id_cr === parseInt(form.cr_id, 10)) || null
+                  }
+                  onChange={(_, newCR) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      cr_id: newCR?.id_cr ?? '',
+                    }))
+                  }
+                  loading={loadingCRs}
+                  noOptionsText={
+                    loadingCRs ? 'Carregando CRs...' : 'Nenhum CR encontrado'
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Centro de Responsabilidade (CR)"
+                      required
+                    />
+                  )}
+                />
               </Grid>
 
 
