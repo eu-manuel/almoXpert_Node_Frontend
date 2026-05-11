@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getItems } from "../services/itemServices";
 import { createItemWarehouse } from "../services/itemWarehouseServices";
-import { getMeusCRs } from "../services/crServices";
+import { getCRs, getMeusCRs } from "../services/crServices";
+import { getMe } from "../services/userServices";
+import { UserContext } from "../context/UserContext";
+import PERMISSIONS from "../constants/permissions";
 import Modal from "./GenericModal";
 import ItemForm from "./ItemForm";
 import {
@@ -24,6 +27,7 @@ export default function AddStockForm({
   onClose,
   onSaved,
 }) {
+  const { user } = useContext(UserContext);
   const [items, setItems] = useState([]);
   const [crs, setCRs] = useState([]);
   const [loadingItems, setLoadingItems] = useState(true);
@@ -60,11 +64,28 @@ export default function AddStockForm({
     fetchCRs();
   }, []);
 
-  // Buscar CRs do usuário logado
+  // Buscar CRs (admin/MANAGE_STOCK vê todos; demais vê apenas CRs vinculados)
   const fetchCRs = async () => {
     try {
       setLoadingCRs(true);
-      const data = await getMeusCRs();
+
+      // Sem usuário no contexto: mantém comportamento atual (meus CRs)
+      if (!user) {
+        const data = await getMeusCRs();
+        setCRs(data);
+        return;
+      }
+
+      // Admin vê tudo sem consultar permissões
+      let allowedAll = !!user.isAdmin;
+
+      if (!allowedAll) {
+        const me = await getMe();
+        const userPermissions = me.Permissions?.map((p) => p.nome) ?? [];
+        allowedAll = userPermissions.includes(PERMISSIONS.MANAGE_STOCK);
+      }
+
+      const data = allowedAll ? await getCRs() : await getMeusCRs();
       setCRs(data);
     } catch (err) {
       console.error("Erro ao buscar CRs:", err.message);
@@ -209,7 +230,7 @@ export default function AddStockForm({
               }}
             />
           )}
-          noOptionsText="Nenhum CR vinculado ao seu perfil"
+          noOptionsText="Nenhum CR encontrado (ou o seu usuario não tem acesso a nenhum)"
           loadingText="Carregando CRs..."
         />
 
