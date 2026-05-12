@@ -348,7 +348,7 @@ const ProcessoTable = ({ refreshFlag, onEdit }) => {
                     {/* Linha expandida com itens */}
                     <TableRow key={`${p.id_processo}-expanded`}>
                       <TableCell
-                        colSpan={8}
+                        colSpan={9}
                         sx={{ p: 0, borderBottom: isExpanded ? undefined : 0 }}
                       >
                         <Collapse in={isExpanded} timeout="auto" unmountOnExit>
@@ -382,7 +382,7 @@ const ProcessoTable = ({ refreshFlag, onEdit }) => {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={8} align="center" sx={{ py: 4 }}>
+                <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
                   <AssignmentIcon
                     sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }}
                   />
