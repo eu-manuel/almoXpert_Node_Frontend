@@ -160,6 +160,7 @@ const ProcessoTable = ({ refreshFlag, onEdit }) => {
               <TableCell width={50} />
               <TableCell>N° Processo</TableCell>
               <TableCell>Almoxarifado</TableCell>
+              <TableCell>CR</TableCell>
               <TableCell align="center">Status</TableCell>
               <TableCell align="right">Valor Previsto</TableCell>
               <TableCell align="right">Valor Total</TableCell>
@@ -224,6 +225,12 @@ const ProcessoTable = ({ refreshFlag, onEdit }) => {
                         onClick={() => handleToggleExpand(p.id_processo)}
                       >
                         {p.Warehouse?.nome || '-'}
+                      </TableCell>
+
+                      <TableCell
+                        onClick={() => handleToggleExpand(p.id_processo)}
+                      >
+                        {p.CentroResponsabilidade?.codigo || p.cr_id || '-'}
                       </TableCell>
 
                       <TableCell
